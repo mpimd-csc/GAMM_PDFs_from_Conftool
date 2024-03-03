@@ -12,10 +12,10 @@ It relies on hidden files
   
 residing in the same directory. The script stores the files
 
-+ abstracts.csv
-+ contributions.csv
-+ sessions.csv
-+ speakers.csv
++ `abstracts.csv`
++ `contributions.csv`
++ `sessions.csv`
++ `speakers.csv`
 
 in the `CSV` directory.
 
