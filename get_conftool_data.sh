@@ -35,7 +35,7 @@ ctdata+="&form_export_papers_options%5B%5D=authors_extended_email"
 ctdata+="&form_export_papers_options%5B%5D=downloads"
 #ctdata+="&form_track=3"  # Optional track selection
 ctdata+="&form_status=p" # Optional status selection
-curl --silent --request POST $URL --data "$ctdata" --output $OUTPUTDIR/$ABSTRACT_FILE
+curl --silent --request POST "$URL" --data "$ctdata" --output "$OUTPUTDIR"/"$ABSTRACT_FILE"
 
 sleep 1 # required to make the nonce bigger than for the last call!
 
@@ -57,7 +57,7 @@ ctdata+="&form_export_papers_options%5B%5D=session"
 ctdata+="&form_export_papers_options%5B%5D=submitter"
 ctdata+="&form_export_papers_options%5B%5D=newlines"
 ctdata+="&form_status=p" # Optional status selection
-curl --silent --request POST $URL --data "$ctdata" --output $OUTPUTDIR/$CONTRIB_FILE
+curl --silent --request POST "$URL" --data "$ctdata" --output "$OUTPUTDIR"/"$CONTRIB_FILE"
 
 sleep 1 # required to make the nonce bigger than for the last call!
 
@@ -71,9 +71,9 @@ PASSHASH=$(echo -n "$TIMESTAMP$PASSWORD" | sha256sum | awk '{print $1;}')
 ctdata="$common_param&nonce=$TIMESTAMP&passhash=$PASSHASH"
 ctdata+="&export_select=sessions"
 ctdata+="&form_export_sessions_options%5B%5D=presentations"
-ctdata+="&form_export_sessions_options%5B%5D=all"
+ctdata+="&form_export_sessions_options%5B%5D=presentations_abstracts"
 
-curl --silent --request POST $URL --data "$ctdata" --output $OUTPUTDIR/$SESSION_FILE
+curl --silent --request POST "$URL" --data "$ctdata" --output "$OUTPUTDIR"/"$SESSION_FILE"
 sleep 1
 
 
@@ -87,6 +87,6 @@ ctdata="$common_param&nonce=$TIMESTAMP&passhash=$PASSHASH"
 ctdata+="&export_select=subsumed_authors"
 ctdata+="&form_status=p" # Status selection: Only authors of presented papers.
 
-curl --silent --request POST $URL --data "$ctdata" --output $OUTPUTDIR/$SPEAKER_FILE
+curl --silent --request POST "$URL" --data "$ctdata" --output "$OUTPUTDIR"/"$SPEAKER_FILE"
 
 exit
