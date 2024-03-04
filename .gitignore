@@ -2,6 +2,7 @@ CSV/abstracts.csv
 CSV/contributions.csv
 CSV/sessions.csv
 CSV/speakers.csv
+CSV/organizers.csv
 HTML/*.html
 .secret
 .url

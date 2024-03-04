@@ -12,6 +12,7 @@ ABSTRACT_FILE="abstracts.csv"
 SESSION_FILE="sessions.csv"
 SPEAKER_FILE="speakers.csv"
 CONTRIB_FILE="contributions.csv"
+ORGA_FILE="organizers.csv"
 
 # set common parameters for REST access
 common_param="page=adminExport"                        # mandatory to call export function
@@ -88,5 +89,18 @@ ctdata+="&export_select=subsumed_authors"
 ctdata+="&form_status=p" # Status selection: Only authors of presented papers.
 
 curl --silent --request POST "$URL" --data "$ctdata" --output "$OUTPUTDIR"/"$SPEAKER_FILE"
+
+
+# parameters for organizer export
+echo "Exporting organizers..."
+
+# nonce and passhash generation same as above
+TIMESTAMP=$(date +%s%4N)
+PASSHASH=$(echo -n "$TIMESTAMP$PASSWORD" | sha256sum | awk '{print $1;}')
+ctdata="$common_param&nonce=$TIMESTAMP&passhash=$PASSHASH"
+ctdata+="&export_select=reviewers"
+ctdata+="&form_status=p" # Status selection: Only authors of presented papers.
+
+curl --silent --request POST "$URL" --data "$ctdata" --output "$OUTPUTDIR"/"$ORGA_FILE"
 
 exit

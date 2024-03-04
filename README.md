@@ -17,7 +17,7 @@ residing in the same directory. The script stores the files
 + `sessions.csv`
 + `speakers.csv`
 
-in the `CSV` directory.
+in the `CSV` directory. The actual generator only uses `sessions.csv` and `organizers.csv`, the others can be useful for consistency checks, as ConfTool adds hints where it suspects duplicates.
 
 ## Book of abstracts
 
