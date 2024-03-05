@@ -1,0 +1,74 @@
+% we need the resizebox and image inclusion features
+\RequirePackage{graphicx}
+% and the calc package for \widthof
+\RequirePackage{calc,tikz}
+
+\newcommand{\gammtitle}[1]{
+  \begin{titlepage}\color{primary}
+    \resizebox{\textwidth}{!}{\bfseries%
+      \parbox{\widthof{Annual Meeting}}
+      {\gammnumber\\[-.25ex] Annual Meeting}}%
+
+    {\huge\bfseries of the Association\\[1ex]
+      of Applied Mathematics and Mechanics}
+
+    \tikz\node[fill=primary,inner sep=0pt,outer sep=0pt] {\parbox{\textwidth}{%
+        \newlength{\mysep}\setlength{\mysep}{2em}
+        \newlength{\innerwidth}\setlength{\innerwidth}{\textwidth}
+        \addtolength{\innerwidth}{-2\mysep}
+        \vskip\mysep\hskip\mysep\parbox{\innerwidth}{%
+          \color{white}\huge\bfseries
+          \gammmonthstart~\gammdaystart\textendash%
+          \gammmonthend~\gammdayend,~\gammyear\newline
+          \gammplace~(\gammcountry)\\[1em]
+          \textcolor{secondary}{#1}
+          \vskip\mysep%
+        }
+      }
+    };\\[-\lineskip]
+    \includegraphics[width=\textwidth,height=.66\textwidth]{../coverimage}
+
+    \vfill
+    \includegraphics[height=4em]{../Logos/GAMM}
+    \begin{minipage}[b]{.6\textwidth}
+      \color{black}\normalsize{\bfseries%
+      \uppercase{Gesellschaft} für\\
+      \uppercase{Angewandte Mathematik} und \uppercase{Mechanik} e.V.}\\
+      \footnotesize\uppercase{Association} of \uppercase{Applied Mathematics} and \uppercase{Mechanics}
+    \end{minipage}%
+    \hfill\large%
+    \color{tertiary}{jahrestagung.gamm.org}
+  \end{titlepage}
+  \newpage
+  %
+  \thispagestyle{empty}
+  \gamminstitutionlogo%
+  \vfill
+  {\large\bfseries%
+    #1 of the\\
+    \gammnumber~Annual Meeting\\
+    of the Association\\
+    of Applied Mathematics and Mechanics\\[1ex]
+    \gammmonthstart~\gammdaystart\textendash\gammmonthend~\gammdayend, %
+    \gammyear%
+    \\\gammplace~(\gammcountry)
+  }
+
+  \covercredits%
+  %
+  \newpage
+  \setcounter{page}{1}
+}
+
+\renewcommand{\tableofcontents}{%
+  \if@twocolumn
+  \@restonecoltrue\onecolumn
+  \else
+  \@restonecolfalse
+  \fi
+  \chapter*{\textcolor{primary}{\contentsname}
+    \@mkboth{%
+      \MakeUppercase\contentsname}{\MakeUppercase\contentsname}}%
+  \@starttoc{toc}%
+  \if@restonecol\twocolumn\fi
+}
