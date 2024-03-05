@@ -21,11 +21,11 @@ files = {
 
 # common request parameters for the REST API needed for all queries
 common_param = {
-    "page": "adminExport",
-    "cmd_create_export": "Create+Export+File",
-    "form_include_deleted": "0",
-    "form_export_format": "csv_semicolon",
-    "form_export_header": "default"
+    "page": "adminExport",                      # mandatory
+    "cmd_create_export": "Create+Export+File",  # mandatory
+    "form_include_deleted": "0",                # cleaned output
+    "form_export_format": "csv_semicolon",      # other options csv_comma, xml, xml_short, xls
+    "form_export_header": "default"             # we need the headers to locate the required columns
 }
 
 # specific request parameters per output type
