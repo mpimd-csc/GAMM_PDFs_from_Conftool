@@ -106,7 +106,7 @@
 }%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Section macro with 3 arguments                                               %
+% Section macro with 2 arguments                                               %
 %                                                                              %
 % 1. section title                                                             %
 % 2. section organizers                                                        %
@@ -146,23 +146,25 @@
 }%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Contribution macro with 4 arguments                                          %
+% Contribution macro with 5 arguments                                          %
 %                                                                              %
 % 1. tile                                                                      %
 % 2. authors                                                                   %
 % 3. starting time                                                             %
-% 4. abstract                                                                  %
+% 4. organizations                                                             %
+% 5. abstract                                                                  %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \RequirePackage{ragged2e}
-\newcommand{\Contribution}[4]{%
+\newcommand{\Contribution}[5]{%
   \pagebreak[0]%
   \setlength{\fboxsep}{0pt}\colorbox{tertiary}{%
     \begin{tabularx}{p{.9\textwidth}p{.1\textwidth}}%
       \multicolumn{2}{p{\textwidth}}{\RaggedRight\textbf{#1}}\\[.1ex]
-      \RaggedRight\small#2 & \hspace*{\fill}#3
+      \RaggedRight\small#2 & \hspace*{\fill}#3\\
+      \RaggedRight\small\textit{#4} &
     \end{tabularx}}%
   \par\nopagebreak%
-  {\sloppy\small\input{#4}}%
+  {\sloppy\small #5}%
   \vspace*{\stretch{1}}%
 }%
 
