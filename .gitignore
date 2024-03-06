@@ -1,3 +1,68 @@
+# General ignores
+# editor (vim/kate/emacs) cache and swaps, etc.#
+################################################
+*~
+*.swp
+.swp
+auto
+DEADJOE
+*.bak
+*.sav
+.vscode
+\#*
+.#*
+*.asv
+
+# Latex
+#################################################
+*.aux
+*.auxlock
+*.bcf
+*.glo
+*.idx
+*.log
+*.toc
+*.ist
+*.acn
+*.acr
+*.alg
+*.bbl
+*.blg
+*.dvi
+*.fdb_latexmk
+*.fls
+*.glg
+*.gls
+*.ilg
+*.ind
+*.loc
+*.lof
+*.lot
+*.maf
+*.mtc*
+*.out
+*.rel
+*.run.xml
+*.synctex.gz
+*.spl
+*.soc
+*.tdo
+*.thm
+*.vrb
+*.nav
+*.snm
+*.md5
+*.dpth
+*.dep
+*.xdv
+
+# Python
+#################################################
+*.py[cod]
+__pycache__
+
+# project specific ignores
+#################################################
 CSV/abstracts.csv
 CSV/contributions.csv
 CSV/sessions.csv
@@ -6,3 +71,4 @@ CSV/organizers.csv
 HTML/*.html
 .secret
 .url
+
