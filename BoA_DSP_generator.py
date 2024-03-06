@@ -170,7 +170,7 @@ def write_dfg(organizers, df, outdir):
     return inputs
 
 
-def main():
+def make_boa():
     # Read the Sessions exported from ConfTool
     df = pd.read_csv('CSV/sessions.csv', sep=';', quotechar='"')
     
@@ -218,6 +218,8 @@ def main():
     boa.write(contents)
     boa.close()
 
- 
+def main():
+    make_boa()
+
 if __name__ == "__main__":
     main()
