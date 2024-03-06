@@ -8,7 +8,7 @@
 + `LaTeX`in here we build the actual PDF file for the book of abstract and
   daily session plans.
   + `Book_of_abstracts` the actual book of abstracts is built in here.
-  + `Common`style files etc.,  used by both documents
+  + `Common`style files etc., used by both documents
   + `Contributions` the TeX files for the program items are put here to
     separate static content from auto-generated content.
   + `Daily_Session_Plans` the overview of all sessions in PDF format is
