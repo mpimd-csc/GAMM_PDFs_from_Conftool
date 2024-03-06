@@ -1,8 +1,10 @@
 % we need the resizebox and image inclusion features
 \RequirePackage{graphicx}
 % and the calc package for \widthof
-\RequirePackage{calc,tikz}
-
+\RequirePackage{calc}
+\newcommand{\reducedstrut}{%
+  \vrule width 0pt height .9\ht\strutbox depth .9\dp\strutbox\relax%
+}
 \newcommand{\gammtitle}[1]{
   \begin{titlepage}\color{primary}
     \resizebox{\textwidth}{!}{\bfseries%
@@ -12,10 +14,12 @@
     {\huge\bfseries of the Association\\[1ex]
       of Applied Mathematics and Mechanics}
 
-    \tikz\node[fill=primary,inner sep=0pt,outer sep=0pt] {\parbox{\textwidth}{%
+    %\tikz\node[fill=primary,inner sep=0pt,outer sep=0pt]
+    \setlength{\fboxsep}{0pt}\colorbox{primary}{\reducedstrut%
+      \parbox{\textwidth}{%
         \newlength{\mysep}\setlength{\mysep}{2em}
         \newlength{\innerwidth}\setlength{\innerwidth}{\textwidth}
-        \addtolength{\innerwidth}{-2\mysep}
+        \addtolength{\innerwidth}{-4\mysep}
         \vskip\mysep\hskip\mysep\parbox{\innerwidth}{%
           \color{white}\huge\bfseries
           \gammmonthstart~\gammdaystart\textendash%
@@ -24,8 +28,8 @@
           \textcolor{secondary}{#1}
           \vskip\mysep%
         }
-      }
-    };\\[-\lineskip]
+      }\/% italic correction ensures full coverage of content
+    }\\[-\lineskip]
     \includegraphics[width=\textwidth,height=.66\textwidth]{../coverimage}
 
     \vfill
