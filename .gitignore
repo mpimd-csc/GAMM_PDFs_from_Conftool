@@ -69,6 +69,8 @@ CSV/sessions.csv
 CSV/speakers.csv
 CSV/organizers.csv
 HTML/*.html
+LaTeX/Book_of_abstracts/BookOfAbstracts.pdf
+LaTeX/Daily_Session_Plan/Daily_Session_Plan.pdf
 .secret
 .url
 
