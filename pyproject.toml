@@ -1,0 +1,31 @@
+[project]
+name = "gamm-boa-dsp-generator"
+version = "2024.0.0"
+dependencies = [
+  "pandas",
+  "requests",
+  "datetime",
+]
+
+requires-python = ">=3"
+
+authors = [
+  {name = "Jens Saak", email = "saak@mpi-magdeburg.mpg.de"},
+]
+
+maintainers = [
+  {name = "Jens Saal", email = "saak@mpi-magdeburg.mpg.de"}
+]
+
+description = "Book of Abstract generator for GAMM annusl meetings based on ConfTool data exports."
+
+readme = "README.md"
+
+license = {file = "COPYING"}
+
+keywords = ["GAMM", "book of abstracts", "daily session program"]
+
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Programming Language :: Python"
+]
