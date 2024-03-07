@@ -90,7 +90,7 @@ def get_plenary_info(row):
         "room"     : row['session_room'],
         "start"    : start.strftime("%H:%M"),
         "end"      : end.strftime("%H:%M"),
-        "date"     : start.strftime("%d.%B.%y")
+        "date"     : start.strftime("%B %d, %Y")
     }
     return contribution
 
