@@ -55,7 +55,8 @@
 \RequirePackage[T1]{fontenc}
 \RequirePackage[ngerman,american]{babel}
 
-
+\RequirePackage{tabularx}
+\RequirePackage{ifthen}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Title page and maketitle                                                     %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -66,7 +67,6 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Sectioning commands                                                          %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\RequirePackage{tabularx}
 \newcommand{\Headline}[3]{%
   \phantomsection%
   \addcontentsline{toc}{#1}{\small#2}{}{}\textbf{\large#3}
@@ -97,7 +97,7 @@
   \pagebreak[0]%
   \setlength{\fboxsep}{0pt}\colorbox{primary}{%
     \color{white}%
-    \begin{tabularx}{p{\widthof{Chair:~}}X}
+    \begin{tabularx}{\textwidth}{p{\widthof{Chair:~}}X}
       \multicolumn{2}{p{\textwidth}}{\Headline{section}{#1}{#1}}\\[.1ex]
       Date:       & #2\hfill #3-#4\\
       Room:       & #5
@@ -113,9 +113,9 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newcommand{\Section}[2]{%
   \pagebreak[0]%
-  \setlength{\fboxsep}{0pt}\colorbox{HKS41K100}{%
+  \setlength{\fboxsep}{0pt}\colorbox{primary}{%
     \color{white}%
-    \begin{tabularx}{p{.20\widthof{Organizer(s):~}}X}
+    \begin{tabularx}{\textwidth}{p{\widthof{Organizer(s):~}}X}
       \multicolumn{2}{p{\textwidth}}{\Headline{section}{#1}{#1}}\\[.1ex]
       Organizer(s):   & \small #2
     \end{tabularx}%
@@ -134,14 +134,14 @@
 % 7. chairs                                                                    %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newcommand{\Session}[7]{%
-  \setlength{\fboxsep}{0pt}\colorbox{HKS41K100}{%
+  \setlength{\fboxsep}{0pt}\colorbox{primary}{%
     \color{white}%
-    \begin{tabular}{p{.20\textwidth}p{.80\textwidth}}
+    \begin{tabularx}{\textwidth}{p{\widthof{Chairs(s):~}}X}
       \multicolumn{2}{p{\textwidth}}{\Headline{subsection}{#1}{#1:#2}}\\[1mm]
       Date:           & #3\hfill #4-#5\\
       Room:           & #6
       \ifthenelse{\equal{#7}{}}{}{\\Chair(s):  & \small #7}
-    \end{tabular}%
+    \end{tabularx}%
   }%
 }%
 
@@ -158,9 +158,9 @@
 \newcommand{\Contribution}[5]{%
   \pagebreak[0]%
   \setlength{\fboxsep}{0pt}\colorbox{tertiary}{%
-    \begin{tabularx}{p{.9\textwidth}p{.1\textwidth}}%
+    \begin{tabularx}{\textwidth}{Xp{\widthof{#3}}}%
       \multicolumn{2}{p{\textwidth}}{\RaggedRight\textbf{#1}}\\[.1ex]
-      \RaggedRight\small#2 & \hspace*{\fill}#3\\
+      \RaggedRight\small#2 & #3\\
       \RaggedRight\small\textit{#4} &
     \end{tabularx}}%
   \par\nopagebreak%

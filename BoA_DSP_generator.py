@@ -46,7 +46,7 @@ def get_session_info(row):
         "room"     : row['session_room'],
         "start"    : start.strftime("%H:%M"),
         "end"      : end.strftime("%H:%M"),
-        "date"     : start.strftime("%d.%B.%y")
+        "date"     : start.strftime("%B %d, %Y")
     }
     return session
 
@@ -78,11 +78,15 @@ def get_contribution_info(row, idx):
 def get_plenary_info(row):
     start = dt.datetime.fromisoformat(row['session_start'].replace(' ','T'))
     end   = dt.datetime.fromisoformat(row['session_end'].replace(' ','T'))
+    if pd.isna(row['chair1']):
+        chair = '\color{red} NOT AVAILABLE'
+    else:
+        chair = row['chair1']
     contribution = {
         "session"  : row['session_short'],
         "title"    : row['p1_title'],
         "speaker"  : row['p1_presenting_author'],
-        "chair"    : row['chair1'],
+        "chair"    : chair,
         "room"     : row['session_room'],
         "start"    : start.strftime("%H:%M"),
         "end"      : end.strftime("%H:%M"),
@@ -123,8 +127,8 @@ def write_PL(df, outdir):
 
 def write_section(org, sec, df, outdir):
     fname = sec.replace(' ', '_')
-    fname = outdir+'/'+fname+'.tex'
-    file = open(fname, 'w', encoding='utf-8')
+    fullname = outdir+'/'+fname+'.tex'
+    file = open(fullname, 'w', encoding='utf-8')
     title, organizers  = get_section_info(org, sec)
     ostring  = f'\\Section{{{title}}}%\n'
     ostring += f'        {{{organizers}}}\n\n'
@@ -153,15 +157,15 @@ def write_section(org, sec, df, outdir):
     return fname
 
 def write_sections(organizers, sessions, outdir):
+    inputs = ''
     for i in range(1,27):
-        inputs = ''
         if not i == 6:
             fname = write_section(organizers, f'S{i:02}', sessions, outdir)
-            inputs += f'\\inputs{{{fname}}}\n'
+            inputs += f'\\input{{{fname}}}\n'
         else:
             fname1 = write_section(organizers, f'S{i:02}.1', sessions, outdir)
             fname2 = write_section(organizers, f'S{i:02}.2', sessions, outdir)
-            inputs += f'\\inputs{{{fname1}}}\n\\inputs{{{fname2}}}\n'
+            inputs += f'\\input{{{fname1}}}\n\\input{{{fname2}}}\n'
     return inputs
 
 def write_minis(organizers, MS, YRM, outdir):
@@ -211,25 +215,28 @@ def make_boa():
     Organizers = Organizers[Organizers.track_type.notnull()].sort_values(by='track_type')
 
     outdir  = './LaTeX/Contributions/'
-    inputs  = ''
+    inputs  = '{\\color{primary}\chapter{Prandtl Memorial Lexture and Plenary Lecture}}'
     inputs += write_PML(Prandtl, outdir)
     inputs += write_PL(Plenaries, outdir)
+    inputs += '{\\color{primary}\chapter{Minisymposia and Young Researchers Minisymposia}}'
     inputs += write_minis(Organizers, Minisymposia, YoungResearchers, outdir)
-    inputs += write_sections(Organizers, Contributed, outdir)
+    inputs += '{\\color{primary}\chapter{DFG Programs}}'
     inputs += write_dfg(Organizers, DFG, outdir)
+    inputs += '{\\color{primary}\chapter{Cotributed Sessions}}'
+    inputs += write_sections(Organizers, Contributed, outdir)
 
     boa = open('./LaTeX/Book_of_abstracts/BookOfAbstracts.tex', 'w', encoding = 'utf-8')
     contents = '''
-    \\documentclass[colorlinks]{gamm-boa}
+ \\documentclass[colorlinks]{gamm-boa}
 
-    \\begin{document}
-    \\tableofcontents
+ \\begin{document}
+ \\tableofcontents
 
-    CONTENTS
+CONTENTS
 
-    \\end{document}
+\\end{document}
     '''
-    contents.replace('CONTENS', inputs)
+    contents = contents.replace('CONTENTS', inputs)
     boa.write(contents)
     boa.close()
 
