@@ -19,7 +19,10 @@
 \RequirePackage{titlesec}
 \titleformat{\chapter}[display]
   {\normalfont\bfseries}{}{0pt}{\color{primary}\Huge\bfseries}
-
+\makeatletter
+\renewcommand{\@pnumwidth}{2em} % avoid overfull page number boxes in TOC
+\renewcommand{\@tocrmarg}{.2em}
+\makeatother
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Class options                                                                %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -101,7 +104,7 @@
     \begin{tabularx}{\tablewidth}{p{\widthof{Laudation:}}X}
       \multicolumn{2}{p{\tablewidth-3\tabcolsep}}{%
       \Headline{section}{#2:~#1}{#2:~#1}}\\
-      Speaker:     & #3\\
+      Speaker:    & #3\\
       Date:       & #4\hfill #5--#6\\
       Room:       & #7
       \ifthenelse{\equal{#8}{}}{}{\\Laudation: & \small #8}
@@ -116,14 +119,14 @@
   \pagebreak[0]%
   \colorbox{primary}{%
     \color{white}%
-    \begin{tabularx}{\tablewidth}{p{\widthof{Speaker:}}X}
+    \begin{tabularx}{\tablewidth}{p{\widthof{Laudation:}}X}
       \multicolumn{2}{p{\tablewidth-3\tabcolsep}}{%
       \Headline{section}{#2:~#1}{#2:~#1}}\\
-      Speaker:     & #3\\
+      Speaker:    & #3\\
       Date:       & #4\hfill #5--#6\\
       Room:       & #7
       \ifthenelse{\equal{#8}{}}{}{\\Chair:  & \small #8}
-    \end{tabularx}
+    \end{tabularx}%
   }%
   \par\nopagebreak%
   {\sloppy\small #9}%
@@ -144,7 +147,7 @@
       \multicolumn{2}{p{\tablewidth-2\tabcolsep}}{%
       \Headline{section}{#1}{#1}}\\
       Organizer(s):   & \small #2
-    \end{tabularx}
+    \end{tabularx}%
   }%
   \par\nopagebreak%
 }%
