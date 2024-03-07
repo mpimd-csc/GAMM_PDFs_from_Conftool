@@ -1,16 +1,20 @@
+#!/usr/bin/env python3
 import datetime as dt
 import pandas as pd
+
+from html2latex import html2latex 
 
 def get_duration(start, end):
     start = start.replace(' ', 'T')
     end = end.replace(' ', 'T')
     dt1 = dt.datetime.fromisoformat(start)
     dt2 = dt.datetime.fromisoformat(end)
-    return (dt2-dt1).minute()
+    return (dt2-dt1).total_seconds() / 60
 
 def get_section_info(df, section):
     sect_organ = df[df['track_type'].str.startswith(section)]
     organizers = ''
+    title = '\\color{red}{NOT AVAILABLE}'
     for index, row in sect_organ.iterrows():
         organizers += f'{row["name"]}, {row["firstname"]}{{\\em ({row["organisation"]})}}\\\\\n'
         title = f'{row["track_type"]}' 
@@ -59,7 +63,7 @@ def get_contribution_info(row, idx):
         "start"    : row[pstart],
         "end"      : row[pend],
         "duration" : get_duration(row[pstart], row[pend]),
-        "abstract" : row[pabstract],
+        "abstract" : html2latex(row[pabstract]),
         "organizations" : row[porgas]
     }
     return contribution
@@ -70,7 +74,7 @@ def get_plenary_info(row):
     contribution = {
         "session"  : row['session_short'],
         "title"    : row['p1_title'],
-        "speaker"  : row['p1_presenting_speaker'],
+        "speaker"  : row['p1_presenting_author'],
         "chair"    : row['chair1'],
         "room"     : row['session_room'],
         "start"    : start.strftime("%H:%M"),
@@ -83,12 +87,12 @@ def write_PML(df, outdir):
     file = open(outdir+'/PML.tex', 'w', encoding='utf-8')
     for index, row in df.iterrows():
         PML = get_plenary_info(row)
-        ostring  = f'\\Prandtl{{{PML['title']}}}%\n'
-        ostring += f'        {{{PML['date']}}}%\n'
-        ostring += f'        {{{PML['start']}}}%\n'
-        ostring += f'        {{{PML['end']}}}%\n'
-        ostring += f'        {{{PML['room']}}}%\n'
-        ostring += f'        {{{PML['chair']}}}'
+        ostring  = f'\\Prandtl{{{PML["title"]}}}%\n'
+        ostring += f'        {{{PML["date"]}}}%\n'
+        ostring += f'        {{{PML["start"]}}}%\n'
+        ostring += f'        {{{PML["end"]}}}%\n'
+        ostring += f'        {{{PML["room"]}}}%\n'
+        ostring += f'        {{{PML["chair"]}}}'
         file.write(ostring)
         file.close()
     return '\\input{PML.tex}\n'
@@ -97,76 +101,78 @@ def write_PL(df, outdir):
     inputs = ''
     for index, row in df.iterrows():        
         PL = get_plenary_info(row)
-        fname = f'{PL['session']}.tex'
+        fname = f'{PL["session"]}.tex'
         file = open(outdir+'/'+fname, 'w', encoding='utf-8')
-        ostring  = f'\\Prandtl{{{PL['title']}}}%\n'
-        ostring += f'        {{{PL['date']}}}%\n'
-        ostring += f'        {{{PL['start']}}}%\n'
-        ostring += f'        {{{PL['end']}}}%\n'
-        ostring += f'        {{{PL['room']}}}%\n'
-        ostring += f'        {{{PL['chair']}}}'
+        ostring  = f'\\Plenary{{{PL["title"]}}}%\n'
+        ostring += f'        {{{PL["date"]}}}%\n'
+        ostring += f'        {{{PL["start"]}}}%\n'
+        ostring += f'        {{{PL["end"]}}}%\n'
+        ostring += f'        {{{PL["room"]}}}%\n'
+        ostring += f'        {{{PL["chair"]}}}'
         file.write(ostring)
         file.close()
         inputs += f'\\input{{{fname}}}\n'
     return inputs
 
 def write_section(org, sec, df, outdir):
-    fname = outdir+'/'+f'{sec.replace(' ', '_')}.tex'
+    fname = sec.replace(' ', '_')
+    fname = outdir+'/'+fname+'.tex'
     file = open(fname, 'w', encoding='utf-8')
-    SEC = get_section_info(org, sec)
-    ostring  = f'\\Section{{{SEC['title']}}}%\n'
-    ostring += f'        {{{SEC['organizers']}}}\n\n'
+    title, organizers  = get_section_info(org, sec)
+    ostring  = f'\\Section{{{title}}}%\n'
+    ostring += f'        {{{organizers}}}\n\n'
 
     sessions = df[df['session_short'].str.startswith(sec)]
     for index, row in sessions.iterrows():
         S = get_session_info(row)
-        ostring += f'\\Session{{{S['number']}}}%\n'
-        ostring += f'{{{S['name']}}}%\n'
-        ostring += f'{{{S['date']}}}%\n'
-        ostring += f'{{{S['start']}}}%\n'
-        ostring += f'{{{S['end']}}}%\n'
-        ostring += f'{{{S['room']}}}%\n'
-        ostring += f'{{{S['chairs']}}}%\n'
+        ostring += f'\\Session{{{S["number"]}}}%\n'
+        ostring += f'{{{S["name"]}}}%\n'
+        ostring += f'{{{S["date"]}}}%\n'
+        ostring += f'{{{S["start"]}}}%\n'
+        ostring += f'{{{S["end"]}}}%\n'
+        ostring += f'{{{S["room"]}}}%\n'
+        ostring += f'{{{S["chairs"]}}}%\n'
         for i in range(1,7):
             C = get_contribution_info(row, i)
-            ostring += f'\\Contribution{{{C['title']}}}%\n'
-            ostring += f'{{{C['authors']}}}%\n'
-            ostring += f'{{{C['start']}}}%\n'
-            ostring += f'{{{C['organizations']}}}'
-            ostring += f'{{{C['abstract']}}}%\n'
+            ostring += f'\\Contribution{{{C["title"]}}}%\n'
+            ostring += f'{{{C["authors"]}}}%\n'
+            ostring += f'{{{C["start"]}}}%\n'
+            ostring += f'{{{C["organizations"]}}}'
+            ostring += f'{{{html2latex(C["abstract"])}}}%\n'
     file.write(ostring)
     file.close()
+    return fname
 
 def write_sections(organizers, sessions, outdir):
     for i in range(26):
         inputs = ''
         if not i == 6:
-            write_section(organizers, f'S{i:2}', sessions, outdir)
-            inputs += f'S{i:2}.tex\n'
+            fname = write_section(organizers, f'S{i:2}', sessions, outdir)
+            inputs += f'\\inputs{{{fname}}}\n'
         else:
-            write_section(organizers, f'S{i:2}.1', sessions, outdir)
-            write_section(organizers, f'S{i:2}.2', sessions, outdir)
-            inputs += f'S{i:2}.1.tex\nS{i:2}.2.tex\n'
+            fname1 = write_section(organizers, f'S{i:2}.1', sessions, outdir)
+            fname2 = write_section(organizers, f'S{i:2}.2', sessions, outdir)
+            inputs += f'\\inputs{{{fname1}}}\n\\inputs{{{fname2}}}\n'
     return inputs
 
 def write_minis(organizers, MS, YRM, outdir):
     inputs = ''
     for i in range(len(MS)):
         name = f'MS{i}'
-        write_section(organizers, name, MS, outdir)
-        inputs += f'\\input{{{name}.tex}}\n'
+        fname = write_section(organizers, name, MS, outdir)
+        inputs += f'\\input{{{fname}}}\n'
 
     for i in range(len(YRM)):
         name = f'YRM{i}'
-        write_section(organizers, name, YRM, outdir)
-        inputs += f'\\input{{{name}.tex}}\n'
+        fname = write_section(organizers, name, YRM, outdir)
+        inputs += f'\\input{{{fname}}}\n'
     return inputs
 
 def write_dfg(organizers, df, outdir):
     inputs = ''
     for index, row in df.iterrows():
-        write_section(organizers, row['session_short'], outdir)
-        inputs += f'\\input{{{row['session_short'].replace(' ', '_')}}}'
+        fname = write_section(organizers, row['session_short'], row, outdir)
+        inputs += f'\\input{{{fname}}}\n'
     return inputs
 
 
