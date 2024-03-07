@@ -71,6 +71,8 @@ CSV/organizers.csv
 HTML/*.html
 LaTeX/Book_of_abstracts/BookOfAbstracts.pdf
 LaTeX/Daily_Session_Plan/Daily_Session_Plan.pdf
+LaTeX/Contributions/*.tex
 .secret
 .url
-
+all_abstracts.tex
+all_abstracts.html
