@@ -57,6 +57,8 @@
 
 \RequirePackage{tabularx}
 \RequirePackage{ifthen}
+\RequirePackage{amsmath, amsfonts, amssymb}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Title page and maketitle                                                     %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -134,7 +136,7 @@
 % 7. chairs                                                                    %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newcommand{\Session}[7]{%
-  \setlength{\fboxsep}{0pt}\colorbox{primary}{%
+  \setlength{\fboxsep}{0pt}\colorbox{secondary}{%
     \color{white}%
     \begin{tabularx}{\textwidth}{p{\widthof{Chairs(s):~}}X}
       \multicolumn{2}{p{\textwidth}}{\Headline{subsection}{#1}{#1:#2}}\\[1mm]
@@ -143,6 +145,7 @@
       \ifthenelse{\equal{#7}{}}{}{\\Chair(s):  & \small #7}
     \end{tabularx}%
   }%
+  \par\nopagebreak%
 }%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

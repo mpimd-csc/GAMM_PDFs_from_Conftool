@@ -20,7 +20,7 @@ def get_section_info(df, section):
     organizers = ''
     title = '\\color{red}{NOT AVAILABLE}'
     for index, row in sect_organ.iterrows():
-        organizers += f'{row["name"]}, {row["firstname"]}{{\\em ({row["organisation"]})}}\\\\\n'
+        organizers += f'{row["name"]}, {row["firstname"]} {{\\em ({row["organisation"]})}}\\newline '
         title = f'{row["track_type"]}' 
     return title, organizers
 
@@ -31,13 +31,13 @@ def get_session_info(row):
     c2 = row['chair2']
     c3 = row['chair3']
 
-    if c3:
-        chairs = f'{c1}\\\\\n{c2}\\\\\n{c3}'
-    else:
-        if c2:
-            chairs = f'{c1}\\\\\n{c2}'
-        else:
+    if pd.isna(c3):
+        if pd.isna(c2):
             chairs = c1
+        else:
+            chairs = f'{c1}\\newline {c2}'
+    else:
+        chairs = f'{c1}\\newline {c2}\\newline {c3}'
 
     session = {
         "chairs"   : chairs,
@@ -147,10 +147,12 @@ def write_section(org, sec, df, outdir):
             C = get_contribution_info(row, i)
             if C is None:
                 break
+            organizations = C["organizations"]
+            organizations = organizations.replace('; ','\\newline')                 
             ostring += f'\\Contribution{{{C["title"]}}}%\n'
             ostring += f'{{{C["authors"]}}}%\n'
             ostring += f'{{{C["start"]}}}%\n'
-            ostring += f'{{{C["organizations"]}}}'
+            ostring += f'{{{organizations}}}\n'
             ostring += f'{{{html2latex(C["abstract"])}}}%\n'
     file.write(ostring)
     file.close()
@@ -215,14 +217,14 @@ def make_boa():
     Organizers = Organizers[Organizers.track_type.notnull()].sort_values(by='track_type')
 
     outdir  = './LaTeX/Contributions/'
-    inputs  = '{\\color{primary}\chapter{Prandtl Memorial Lexture and Plenary Lecture}}'
+    inputs  = '{\\color{primary}%\n\chapter{Prandtl Memorial Lexture and Plenary Lecture}}\n'
     inputs += write_PML(Prandtl, outdir)
     inputs += write_PL(Plenaries, outdir)
-    inputs += '{\\color{primary}\chapter{Minisymposia and Young Researchers Minisymposia}}'
+    inputs += '{\\color{primary}%\n\chapter{Minisymposia and Young Researchers Minisymposia}}\n'
     inputs += write_minis(Organizers, Minisymposia, YoungResearchers, outdir)
-    inputs += '{\\color{primary}\chapter{DFG Programs}}'
+    inputs += '{\\color{primary}%\n\chapter{DFG Programs}}\n'
     inputs += write_dfg(Organizers, DFG, outdir)
-    inputs += '{\\color{primary}\chapter{Cotributed Sessions}}'
+    inputs += '{\\color{primary}%\n\chapter{Cotributed Sessions}}\n'
     inputs += write_sections(Organizers, Contributed, outdir)
 
     boa = open('./LaTeX/Book_of_abstracts/BookOfAbstracts.tex', 'w', encoding = 'utf-8')
