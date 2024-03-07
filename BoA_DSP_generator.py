@@ -1,8 +1,46 @@
 #!/usr/bin/env python3
 import datetime as dt
 import pandas as pd
+import re
 
 from html2latex import html2latex 
+
+def janitor(instr):
+    instr = instr.replace(' &', ' \&')
+    instr = instr.replace('#', '\\#')
+    instr = instr.replace('Γ', '\\ensuremath\\Gamma ')
+    instr = instr.replace('Ω', '\\ensuremath\\Omega ')
+    instr = instr.replace('∑', '\\ensuremath\\Sigma ')
+    instr = instr.replace('∇', '\\ensuremath\\nabla ')
+    instr = instr.replace('Δ', '\\ensuremath\\Delta ')
+    instr = instr.replace('√', '\\ensuremath\\sqrt')
+    instr = instr.replace('⋆', '\\ensuremath\\ast ')
+    instr = instr.replace('λ', '\\ensuremath\\lambda ')
+    instr = instr.replace('φ', '\\ensuremath\\varphi ')
+    instr = instr.replace('ε', '\\ensuremath\\varepsilon ')
+    instr = instr.replace('ϕ', '\\ensuremath\\Phi ')
+    instr = instr.replace('∈', '\\ensuremath\\in ')
+    instr = instr.replace('ψ', '\\ensuremath\\psi ')
+    instr = instr.replace('ξ', '\\ensuremath\\xi ')
+    instr = instr.replace('π', '\\ensuremath\\pi ')
+    instr = instr.replace('μ', '\\ensuremath\\mu ')
+    instr = instr.replace('∞', '\\ensuremath\\infty ')
+    instr = instr.replace('β', '\\ensuremath\\beta ')
+    instr = instr.replace('ω', '\\ensuremath\\omega ')
+    instr = instr.replace(u'\u03c3', '\\ensuremath\\sigma ')
+    instr = instr.replace('θ', '\\ensuremath\\Theta ')
+    instr = instr.replace('\R', '\\mathbb{R}')
+    instr = instr.replace('≤', '\\ensuremath\\leq')
+    instr = instr.replace(u'\u2003', '~')
+    instr = instr.replace(u'\u202F', '~')
+    instr = instr.replace(u'\u2248', '')
+    instr = instr.replace(u'\u2212', '-')
+    instr = instr.replace(u'\u0308', '\\"')
+    instr = instr.replace(u'\u0301', '\\\'')
+    instr = instr.replace('^2','\\textsuperscript{2}')
+    #instr = instr.replace('^p','\\textsuperscript{p}')
+    instr = instr.replace('^m','\\textsuperscript{m}')
+    return instr
 
 def get_duration(start, end):
     start = start.replace(' ', 'T')
@@ -19,9 +57,13 @@ def get_section_info(df, section):
     sect_organ = df[df['track_type'].str.startswith(section)]
     organizers = ''
     title = '\\color{red}{NOT AVAILABLE}'
+    first = True
     for index, row in sect_organ.iterrows():
-        organizers += f'{row["name"]}, {row["firstname"]} {{\\em ({row["organisation"]})}}\\newline '
-        title = f'{row["track_type"]}' 
+        if not first:
+            organizers += '\\newline '
+        organizers += f'{row["name"]}, {row["firstname"]} {{\\em ({row["organisation"]})}}'
+        title = row["track_type"]
+        first = False
     return title, organizers
 
 def get_session_info(row):
@@ -82,10 +124,15 @@ def get_plenary_info(row):
         chair = '\color{red} NOT AVAILABLE'
     else:
         chair = row['chair1']
+    if pd.isna(row['p1_organisations']):
+        speaker = row['p1_presenting_author']
+    else:
+        speaker = row['p1_presenting_author'] + ' {\\em (' + row['p1_organisations'] + ')}'
     contribution = {
         "session"  : row['session_short'],
         "title"    : row['p1_title'],
-        "speaker"  : row['p1_presenting_author'],
+        "speaker"  : speaker,
+        "abstract" : html2latex(row['p1_abstract']),
         "chair"    : chair,
         "room"     : row['session_room'],
         "start"    : start.strftime("%H:%M"),
@@ -99,11 +146,15 @@ def write_PML(df, outdir):
     for index, row in df.iterrows():
         PML = get_plenary_info(row)
         ostring  = f'\\Prandtl{{{PML["title"]}}}%\n'
+        ostring += f'        {{{PML["session"]}}}%\n'
+        ostring += f'        {{{PML["speaker"]}}}%\n'
         ostring += f'        {{{PML["date"]}}}%\n'
         ostring += f'        {{{PML["start"]}}}%\n'
         ostring += f'        {{{PML["end"]}}}%\n'
         ostring += f'        {{{PML["room"]}}}%\n'
-        ostring += f'        {{{PML["chair"]}}}'
+        ostring += f'        {{{PML["chair"]}}}%\n'
+        ostring += f'        {{{PML["abstract"]}}}%\n'
+        ostring = janitor(ostring)
         file.write(ostring)
         file.close()
     return '\\input{PML.tex}\n'
@@ -115,11 +166,15 @@ def write_PL(df, outdir):
         fname = f'{PL["session"]}.tex'
         file = open(outdir+'/'+fname, 'w', encoding='utf-8')
         ostring  = f'\\Plenary{{{PL["title"]}}}%\n'
+        ostring += f'        {{{PL["session"]}}}%\n'
+        ostring += f'        {{{PL["speaker"]}}}%\n'
         ostring += f'        {{{PL["date"]}}}%\n'
         ostring += f'        {{{PL["start"]}}}%\n'
         ostring += f'        {{{PL["end"]}}}%\n'
         ostring += f'        {{{PL["room"]}}}%\n'
-        ostring += f'        {{{PL["chair"]}}}'
+        ostring += f'        {{{PL["chair"]}}}\n'
+        ostring += f'        {{{PL["abstract"]}}}%\n'
+        ostring = janitor(ostring)
         file.write(ostring)
         file.close()
         inputs += f'\\input{{{fname}}}\n'
@@ -129,7 +184,7 @@ def write_section(org, sec, df, outdir):
     fname = sec.replace(' ', '_')
     fullname = outdir+'/'+fname+'.tex'
     file = open(fullname, 'w', encoding='utf-8')
-    title, organizers  = get_section_info(org, sec)
+    title, organizers = get_section_info(org, sec)
     ostring  = f'\\Section{{{title}}}%\n'
     ostring += f'        {{{organizers}}}\n\n'
 
@@ -148,12 +203,14 @@ def write_section(org, sec, df, outdir):
             if C is None:
                 break
             organizations = C["organizations"]
-            organizations = organizations.replace('; ','\\newline')                 
+            organizations = organizations.replace('; ','\\newline ')   
+            start = re.sub('^.* ','', C["start"])              
             ostring += f'\\Contribution{{{C["title"]}}}%\n'
             ostring += f'{{{C["authors"]}}}%\n'
-            ostring += f'{{{C["start"]}}}%\n'
+            ostring += f'{{{start}}}%\n'
             ostring += f'{{{organizations}}}\n'
             ostring += f'{{{html2latex(C["abstract"])}}}%\n'
+    ostring = janitor(ostring)
     file.write(ostring)
     file.close()
     return fname
@@ -172,13 +229,13 @@ def write_sections(organizers, sessions, outdir):
 
 def write_minis(organizers, MS, YRM, outdir):
     inputs = ''
-    for i in range(1,len(MS)+1):
-        name = f'MS{i}'
+    for i in range(len(MS)):
+        name = f'MS{i+1}'
         fname = write_section(organizers, name, MS, outdir)
         inputs += f'\\input{{{fname}}}\n'
 
     for i in range(len(YRM)):
-        name = f'YRM{i}'
+        name = f'YRM{i+1}'
         fname = write_section(organizers, name, YRM, outdir)
         inputs += f'\\input{{{fname}}}\n'
     return inputs
@@ -217,27 +274,26 @@ def make_boa():
     Organizers = Organizers[Organizers.track_type.notnull()].sort_values(by='track_type')
 
     outdir  = './LaTeX/Contributions/'
-    inputs  = '{\\color{primary}%\n\chapter{Prandtl Memorial Lexture and Plenary Lecture}}\n'
+    inputs  = '\chapter{Prandtl Memorial Lecture and Plenary~Lectures}\n'
     inputs += write_PML(Prandtl, outdir)
     inputs += write_PL(Plenaries, outdir)
-    inputs += '{\\color{primary}%\n\chapter{Minisymposia and Young Researchers Minisymposia}}\n'
+    inputs += '\chapter{Minisymposia and Young Researchers Minisymposia}\n'
     inputs += write_minis(Organizers, Minisymposia, YoungResearchers, outdir)
-    inputs += '{\\color{primary}%\n\chapter{DFG Programs}}\n'
+    inputs += '\chapter{DFG Programs}\n'
     inputs += write_dfg(Organizers, DFG, outdir)
-    inputs += '{\\color{primary}%\n\chapter{Cotributed Sessions}}\n'
+    inputs += '\chapter{Cotributed Sessions}\n'
     inputs += write_sections(Organizers, Contributed, outdir)
 
     boa = open('./LaTeX/Book_of_abstracts/BookOfAbstracts.tex', 'w', encoding = 'utf-8')
     contents = '''
- \\documentclass[colorlinks]{gamm-boa}
+\\documentclass[colorlinks]{gamm-boa}
 
- \\begin{document}
- \\tableofcontents
-
+\\begin{document}
+\\tableofcontents
 CONTENTS
-
+\\printindex
 \\end{document}
-    '''
+'''
     contents = contents.replace('CONTENTS', inputs)
     boa.write(contents)
     boa.close()

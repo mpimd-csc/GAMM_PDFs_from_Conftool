@@ -6,7 +6,7 @@
 \ProvidesClass{gamm-boa}[2024/03/18 GAMM book of abstracts class]
 
 % pick report as th base class
-\LoadClass[10pt, a4paper, oneside]{report}
+\LoadClass[11pt, a4paper, oneside, draft]{report}
 \setlength{\parskip}{1.0em plus0.45em minus0.45em}
 \setlength{\parindent}{0em}
 \RequirePackage{geometry}
@@ -16,6 +16,10 @@
   left=20mm,
   top=20mm,
 }
+\RequirePackage{titlesec}
+\titleformat{\chapter}[display]
+  {\normalfont\bfseries}{}{0pt}{\color{primary}\Huge\bfseries}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Class options                                                                %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -46,8 +50,9 @@
 
 \ifcolorlinks%
   \RequirePackage[%
-    colorlinks = true,
-    pdfpagelabels
+  colorlinks = true,
+  linkcolor = primary,
+  pdfpagelabels
   ]{hyperref}
 \fi
 
@@ -58,7 +63,9 @@
 \RequirePackage{tabularx}
 \RequirePackage{ifthen}
 \RequirePackage{amsmath, amsfonts, amssymb}
-
+\RequirePackage{upgreek}
+\usepackage{makeidx}
+\makeindex
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Title page and maketitle                                                     %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -70,41 +77,57 @@
 % Sectioning commands                                                          %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newcommand{\Headline}[3]{%
-  \phantomsection%
-  \addcontentsline{toc}{#1}{\small#2}{}{}\textbf{\large#3}
-}
+{\bfseries\large#3}\phantomsection\addcontentsline{toc}{#1}{\small#2}{}{}%
+}%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Plenary Event section macros with 6 arguments                                %
 %                                                                              %
 % 1. title                                                                     %
-% 2. date                                                                      %
-% 3. starting time                                                             %
-% 4. ending time                                                               %
-% 5. room                                                                      %
-% 6. laudatory / session chair                                                 %
+% 2. session                                                                   %
+% 3. speaker                                                                   %
+% 4. date                                                                      %
+% 5. starting time                                                             %
+% 6. ending time                                                               %
+% 7. room                                                                      %
+% 8. laudatory / session chair                                                 %
+% 9. abstract                                                                  %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\newcommand{\Prandtl}[6]{%
-  \setlength{\fboxsep}{0pt}\colorbox{primary}{%
+\setlength{\fboxsep}{1ex}
+\newlength{\tablewidth}\setlength{\tablewidth}{\textwidth-2\fboxsep-2\fboxrule}
+\newcommand{\Prandtl}[9]{%
+  \colorbox{primary}{%
     \color{white}%
-    \begin{tabularx}{\textwidth}{p{\widthof{Laudation:~}}X}
-      \multicolumn{2}{p{\textwidth}}{\Headline{section}{#1}{#1}}\\[.1ex]
-      Date:       & #2\hfill #3-#4\\
-      Room:       & #5
-      \ifthenelse{\equal{#6}{}}{}{\\Laudation: & \small #6}
-    \end{tabularx}}%
+    \begin{tabularx}{\tablewidth}{p{\widthof{Laudation:}}X}
+      \multicolumn{2}{p{\tablewidth-3\tabcolsep}}{%
+      \Headline{section}{#2:~#1}{#2:~#1}}\\
+      Speaker:     & #3\\
+      Date:       & #4\hfill #5--#6\\
+      Room:       & #7
+      \ifthenelse{\equal{#8}{}}{}{\\Laudation: & \small #8}
+    \end{tabularx}%
+  }%
+  \par\nopagebreak%
+  {\sloppy\small #9}%
+  \vspace*{\stretch{1}}%
 }%
 
-\newcommand{\Plenary}[6]{%
+\newcommand{\Plenary}[9]{%
   \pagebreak[0]%
-  \setlength{\fboxsep}{0pt}\colorbox{primary}{%
+  \colorbox{primary}{%
     \color{white}%
-    \begin{tabularx}{\textwidth}{p{\widthof{Chair:~}}X}
-      \multicolumn{2}{p{\textwidth}}{\Headline{section}{#1}{#1}}\\[.1ex]
-      Date:       & #2\hfill #3-#4\\
-      Room:       & #5
-      \ifthenelse{\equal{#6}{}}{}{\\Chair:  & \small #6}
-    \end{tabularx}}%
+    \begin{tabularx}{\tablewidth}{p{\widthof{Speaker:}}X}
+      \multicolumn{2}{p{\tablewidth-3\tabcolsep}}{%
+      \Headline{section}{#2:~#1}{#2:~#1}}\\
+      Speaker:     & #3\\
+      Date:       & #4\hfill #5--#6\\
+      Room:       & #7
+      \ifthenelse{\equal{#8}{}}{}{\\Chair:  & \small #8}
+    \end{tabularx}
+  }%
+  \par\nopagebreak%
+  {\sloppy\small #9}%
+  \vspace*{\stretch{1}}%
 }%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -115,13 +138,15 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newcommand{\Section}[2]{%
   \pagebreak[0]%
-  \setlength{\fboxsep}{0pt}\colorbox{primary}{%
+  \colorbox{primary}{%
     \color{white}%
-    \begin{tabularx}{\textwidth}{p{\widthof{Organizer(s):~}}X}
-      \multicolumn{2}{p{\textwidth}}{\Headline{section}{#1}{#1}}\\[.1ex]
+    \begin{tabularx}{\tablewidth}{p{\widthof{Organizer(s):~}}X}
+      \multicolumn{2}{p{\tablewidth-2\tabcolsep}}{%
+      \Headline{section}{#1}{#1}}\\
       Organizer(s):   & \small #2
-    \end{tabularx}%
+    \end{tabularx}
   }%
+  \par\nopagebreak%
 }%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -136,11 +161,12 @@
 % 7. chairs                                                                    %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newcommand{\Session}[7]{%
-  \setlength{\fboxsep}{0pt}\colorbox{secondary}{%
+  \colorbox{secondary}{%
     \color{white}%
-    \begin{tabularx}{\textwidth}{p{\widthof{Chairs(s):~}}X}
-      \multicolumn{2}{p{\textwidth}}{\Headline{subsection}{#1}{#1:#2}}\\[1mm]
-      Date:           & #3\hfill #4-#5\\
+    \begin{tabularx}{\tablewidth}{p{\widthof{Chair(s):}}X}
+      \multicolumn{2}{p{\tablewidth-2\tabcolsep}}{%
+      \Headline{subsection}{#1}{#1:~#2}}\\
+      Date:           & #3\hfill #4--#5\\
       Room:           & #6
       \ifthenelse{\equal{#7}{}}{}{\\Chair(s):  & \small #7}
     \end{tabularx}%
@@ -160,12 +186,14 @@
 \RequirePackage{ragged2e}
 \newcommand{\Contribution}[5]{%
   \pagebreak[0]%
-  \setlength{\fboxsep}{0pt}\colorbox{tertiary}{%
-    \begin{tabularx}{\textwidth}{Xp{\widthof{#3}}}%
-      \multicolumn{2}{p{\textwidth}}{\RaggedRight\textbf{#1}}\\[.1ex]
+  \colorbox{tertiary}{%
+    \begin{tabularx}{\tablewidth}{Xp{\widthof{#3}}}
+      \multicolumn{2}{p{\tablewidth-2\tabcolsep}}{%
+      \Headline{subsubsection}{#1}{\normalsize#1}}\\
       \RaggedRight\small#2 & #3\\
       \RaggedRight\small\textit{#4} &
-    \end{tabularx}}%
+    \end{tabularx}%
+  }% end of colorbox
   \par\nopagebreak%
   {\sloppy\small #5}%
   \vspace*{\stretch{1}}%
