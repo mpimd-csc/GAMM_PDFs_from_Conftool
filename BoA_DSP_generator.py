@@ -12,6 +12,10 @@ def get_duration(start, end):
     return (dt2-dt1).total_seconds() / 60
 
 def get_section_info(df, section):
+    if section.startswith('DFG-PP'):
+        section = section.replace('DFG-PP', 'SPP')
+    if section.startswith('DFG-GRK'):
+        section = section.replace('DFG-GRK', 'GRK')
     sect_organ = df[df['track_type'].str.startswith(section)]
     organizers = ''
     title = '\\color{red}{NOT AVAILABLE}'
@@ -56,7 +60,10 @@ def get_contribution_info(row, idx):
     pend       = f'p{idx}_end'
 
     presenter = row[ppresenter]
-    authors = row[pauthors].replace(presenter, f'\\underline{{{presenter}}}')
+    if pd.isna(presenter):
+        return None
+    authors = row[pauthors]
+    authors = authors.replace(presenter, f'\\underline{{{presenter}}}')
     contribution = {
         "title"    : row[ptitle],
         "authors"  : authors,
@@ -134,6 +141,8 @@ def write_section(org, sec, df, outdir):
         ostring += f'{{{S["chairs"]}}}%\n'
         for i in range(1,7):
             C = get_contribution_info(row, i)
+            if C is None:
+                break
             ostring += f'\\Contribution{{{C["title"]}}}%\n'
             ostring += f'{{{C["authors"]}}}%\n'
             ostring += f'{{{C["start"]}}}%\n'
@@ -144,20 +153,20 @@ def write_section(org, sec, df, outdir):
     return fname
 
 def write_sections(organizers, sessions, outdir):
-    for i in range(26):
+    for i in range(1,27):
         inputs = ''
         if not i == 6:
-            fname = write_section(organizers, f'S{i:2}', sessions, outdir)
+            fname = write_section(organizers, f'S{i:02}', sessions, outdir)
             inputs += f'\\inputs{{{fname}}}\n'
         else:
-            fname1 = write_section(organizers, f'S{i:2}.1', sessions, outdir)
-            fname2 = write_section(organizers, f'S{i:2}.2', sessions, outdir)
+            fname1 = write_section(organizers, f'S{i:02}.1', sessions, outdir)
+            fname2 = write_section(organizers, f'S{i:02}.2', sessions, outdir)
             inputs += f'\\inputs{{{fname1}}}\n\\inputs{{{fname2}}}\n'
     return inputs
 
 def write_minis(organizers, MS, YRM, outdir):
     inputs = ''
-    for i in range(len(MS)):
+    for i in range(1,len(MS)+1):
         name = f'MS{i}'
         fname = write_section(organizers, name, MS, outdir)
         inputs += f'\\input{{{fname}}}\n'
@@ -171,7 +180,7 @@ def write_minis(organizers, MS, YRM, outdir):
 def write_dfg(organizers, df, outdir):
     inputs = ''
     for index, row in df.iterrows():
-        fname = write_section(organizers, row['session_short'], row, outdir)
+        fname = write_section(organizers, row['session_short'], df, outdir)
         inputs += f'\\input{{{fname}}}\n'
     return inputs
 
@@ -189,7 +198,7 @@ def make_boa():
     DFG              = df[df['session_short'].str.startswith('DFG')].sort_values(by='session_short')
     Prandtl          = df[df['session_short'].str.startswith('PML')].sort_values(by='session_short')
     Plenaries        = df[df['session_short'].str.startswith('PL')].sort_values(by='session_short')
-    Minisymposia     = df[df['session_short'].str.startswith('MR')].sort_values(by='session_short')
+    Minisymposia     = df[df['session_short'].str.startswith('MS')].sort_values(by='session_short')
     YoungResearchers = df[df['session_short'].str.startswith('YRM')].sort_values(by='session_short')
     Contributed      = df[df['session_short'].str.startswith('S')].sort_values(by='session_short')
 
@@ -206,8 +215,8 @@ def make_boa():
     inputs += write_PML(Prandtl, outdir)
     inputs += write_PL(Plenaries, outdir)
     inputs += write_minis(Organizers, Minisymposia, YoungResearchers, outdir)
-    inputs += write_dfg(Organizers, DFG, outdir)
     inputs += write_sections(Organizers, Contributed, outdir)
+    inputs += write_dfg(Organizers, DFG, outdir)
 
     boa = open('./LaTeX/Book_of_abstracts/BookOfAbstracts.tex', 'w', encoding = 'utf-8')
     contents = '''
