@@ -40,6 +40,7 @@ def janitor(instr):
     instr = instr.replace('^2','\\textsuperscript{2}')
     #instr = instr.replace('^p','\\textsuperscript{p}')
     instr = instr.replace('^m','\\textsuperscript{m}')
+    instr = instr.replace('\percent', '\%')
     return instr
 
 def get_duration(start, end):
