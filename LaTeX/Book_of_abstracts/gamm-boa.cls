@@ -6,7 +6,7 @@
 \ProvidesClass{gamm-boa}[2024/03/18 GAMM book of abstracts class]
 
 % pick report as th base class
-\LoadClass[11pt, a4paper, oneside]{report}
+\LoadClass[11pt, oneside]{report}
 \setlength{\parskip}{1.0ex plus0.45ex minus0.45ex}
 \setlength{\parindent}{0em}
 \RequirePackage{geometry}
@@ -101,17 +101,17 @@
 \newcommand{\Prandtl}[9]{%
   \colorbox{primary}{%
     \color{white}%
-    \begin{tabularx}{\tablewidth}{p{\widthof{Laudation:}}X}
-      \multicolumn{2}{p{\tablewidth-3\tabcolsep}}{%
+    \begin{tabularx}{\tablewidth}{@{}p{\widthof{Laudation:}}X@{}}
+      \multicolumn{2}{@{}p{\tablewidth}@{}}{%
       \Headline{section}{#2:~#1}{#2:~#1}}\\
-      Speaker:    & #3\\
+      Speaker:    & {\bfseries #3}\\
       Date:       & #4\hfill #5--#6\\
       Room:       & #7
       \ifthenelse{\equal{#8}{}}{}{\\Laudation: & \small #8}
     \end{tabularx}%
   }%
   \par\nopagebreak%
-  {\sloppy\small #9}%
+  {\sloppy #9}%
   \vspace*{\stretch{1}}%
 }%
 
@@ -119,17 +119,17 @@
   \pagebreak[0]%
   \colorbox{primary}{%
     \color{white}%
-    \begin{tabularx}{\tablewidth}{p{\widthof{Laudation:}}X}
-      \multicolumn{2}{p{\tablewidth-3\tabcolsep}}{%
+    \begin{tabularx}{\tablewidth}{@{}p{\widthof{Laudation:}}X@{}}
+      \multicolumn{2}{@{}p{\tablewidth}@{}}{%
       \Headline{section}{#2:~#1}{#2:~#1}}\\
-      Speaker:    & #3\\
+      Speaker:    & {\bfseries #3}\\
       Date:       & #4\hfill #5--#6\\
       Room:       & #7
       \ifthenelse{\equal{#8}{}}{}{\\Chair:  & \small #8}
     \end{tabularx}%
   }%
   \par\nopagebreak%
-  {\sloppy\small #9}%
+  {\sloppy #9}%
   \vspace*{\stretch{1}}%
 }%
 
@@ -143,8 +143,8 @@
   \pagebreak[0]%
   \colorbox{primary}{%
     \color{white}%
-    \begin{tabularx}{\tablewidth}{p{\widthof{Organizer(s):~}}X}
-      \multicolumn{2}{p{\tablewidth-2\tabcolsep}}{%
+    \begin{tabularx}{\tablewidth}{@{}p{\widthof{Organizer(s):~}}X@{}}
+      \multicolumn{2}{@{}p{\tablewidth}@{}}{%
       \Headline{section}{#1}{#1}}\\
       Organizer(s):   & \small #2
     \end{tabularx}%
@@ -166,8 +166,8 @@
 \newcommand{\Session}[7]{%
   \colorbox{secondary}{%
     \color{white}%
-    \begin{tabularx}{\tablewidth}{p{\widthof{Chair(s):}}X}
-      \multicolumn{2}{p{\tablewidth-2\tabcolsep}}{%
+    \begin{tabularx}{\tablewidth}{@{}p{\widthof{Chair(s):}}X@{}}
+      \multicolumn{2}{@{}p{\tablewidth}@{}}{%
       \Headline{subsection}{#1}{#1:~#2}}\\
       Date:           & #3\hfill #4--#5\\
       Room:           & #6
@@ -190,15 +190,15 @@
 \newcommand{\Contribution}[5]{%
   \pagebreak[0]%
   \colorbox{tertiary}{%
-    \begin{tabularx}{\tablewidth}{Xp{\widthof{#3}}}
-      \multicolumn{2}{p{\tablewidth-2\tabcolsep}}{%
+    \begin{tabularx}{\tablewidth}{@{}Xp{\widthof{#3}}@{}}
+      \multicolumn{2}{@{}p{\tablewidth}@{}}{%
       \Headline{subsubsection}{#1}{\normalsize#1}}\\
       \RaggedRight\small#2 & #3\\
       \RaggedRight\small\textit{#4} &
     \end{tabularx}%
   }% end of colorbox
   \par\nopagebreak%
-  {\sloppy\small #5}%
+  {\sloppy #5}%
   \vspace*{\stretch{1}}%
 }%
 
