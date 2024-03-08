@@ -6,8 +6,8 @@
 \ProvidesClass{gamm-boa}[2024/03/18 GAMM book of abstracts class]
 
 % pick report as th base class
-\LoadClass[11pt, a4paper, oneside, draft]{report}
-\setlength{\parskip}{1.0em plus0.45em minus0.45em}
+\LoadClass[11pt, a4paper, oneside]{report}
+\setlength{\parskip}{1.0ex plus0.45ex minus0.45ex}
 \setlength{\parindent}{0em}
 \RequirePackage{geometry}
 \geometry{
