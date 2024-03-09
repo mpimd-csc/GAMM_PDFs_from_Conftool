@@ -103,7 +103,7 @@
     \color{white}%
     \begin{tabularx}{\tablewidth}{@{}p{\widthof{Laudation:}}X@{}}
       \multicolumn{2}{@{}p{\tablewidth}@{}}{%
-      \Headline{section}{#2:~#1}{#2:~#1}}\\
+      \Headline{section}{#2:~#1~(#3)}{#2:~#1}}\\
       Speaker:    & {\bfseries #3}\\
       Date:       & #4\hfill #5--#6\\
       Room:       & #7
@@ -121,7 +121,7 @@
     \color{white}%
     \begin{tabularx}{\tablewidth}{@{}p{\widthof{Laudation:}}X@{}}
       \multicolumn{2}{@{}p{\tablewidth}@{}}{%
-      \Headline{section}{#2:~#1}{#2:~#1}}\\
+      \Headline{section}{#2:~#1~(#3)}{#2:~#1}}\\
       Speaker:    & {\bfseries #3}\\
       Date:       & #4\hfill #5--#6\\
       Room:       & #7
@@ -168,7 +168,7 @@
     \color{white}%
     \begin{tabularx}{\tablewidth}{@{}p{\widthof{Chair(s):}}X@{}}
       \multicolumn{2}{@{}p{\tablewidth}@{}}{%
-      \Headline{subsection}{#1}{#1:~#2}}\\
+      \Headline{subsection}{#1: #2 (#6)}{#1:~#2}}\\
       Date:           & #3\hfill #4--#5\\
       Room:           & #6
       \ifthenelse{\equal{#7}{}}{}{\\Chair(s):  & \small #7}
