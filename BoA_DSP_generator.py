@@ -27,6 +27,7 @@ def janitor(instr):
     instr = instr.replace('∞', '\\ensuremath\\infty ')
     instr = instr.replace('β', '\\ensuremath\\beta ')
     instr = instr.replace('ω', '\\ensuremath\\omega ')
+    instr = instr.replace('→', '\\ensuremath\\rightarrow ')
     instr = instr.replace(u'\u03c3', '\\ensuremath\\sigma ')
     instr = instr.replace('θ', '\\ensuremath\\Theta ')
     instr = instr.replace('\R', '\\mathbb{R}')
@@ -41,6 +42,7 @@ def janitor(instr):
     #instr = instr.replace('^p','\\textsuperscript{p}')
     instr = instr.replace('^m','\\textsuperscript{m}')
     instr = instr.replace('\percent', '\%')
+    instr = instr.replace('\&=', '&=')
     return instr
 
 def get_duration(start, end):
