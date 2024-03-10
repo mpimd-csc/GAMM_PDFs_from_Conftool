@@ -78,7 +78,10 @@ def get_session_info(row):
 
     if pd.isna(c3):
         if pd.isna(c2):
-            chairs = c1
+            if pd.isna(c1):
+                chairs = ''
+            else:
+                chairs = c1
         else:
             chairs = f'{c1}\\newline {c2}'
     else:
