@@ -224,6 +224,6 @@
 % Input path for Contributions                                                 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \makeatletter
-\def\input@path{{../Contributions/}}
+\def\input@path{{./Sessions/}}
 %or: \def\input@path{{/path/to/folder/}{/path/to/other/folder/}}
 \makeatother

@@ -279,7 +279,7 @@ def make_boa():
     # drop everyone whos not a session organizer and sort by sections
     Organizers = Organizers[Organizers.track_type.notnull()].sort_values(by='track_type')
 
-    outdir  = './LaTeX/Contributions/'
+    outdir  = './LaTeX/Book_of_abstracts/Sessions/'
     inputs  = '\chapter{Prandtl Memorial Lecture and Plenary~Lectures}\n'
     inputs += write_PML(Prandtl, outdir)
     inputs += write_PL(Plenaries, outdir)
