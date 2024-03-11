@@ -3,7 +3,7 @@
 % Written by Jens Saak, March 2024                                             %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{gamm-boa}[2024/03/18 GAMM book of abstracts class]
+\ProvidesClass{gamm-dsp}[2024/03/18 GAMM book of abstracts class]
 
 % pick report as th base class
 \LoadClass[11pt, oneside]{report}
@@ -39,6 +39,9 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % switch to OpenSans font as the default
 \RequirePackage[default, scale=.95]{opensans}
+
+% colors
+\RequirePackage{xcolor}
 
 % Load this year's base information
 \RequirePackage{../this-gamm}

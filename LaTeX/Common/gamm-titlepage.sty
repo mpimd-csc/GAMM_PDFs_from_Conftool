@@ -7,7 +7,7 @@
 }
 \newcommand{\gammtitle}[1]{
   \begin{titlepage}\color{primary}
-    \resizebox{\textwidth}{!}{\bfseries%
+    \resizebox{\linewidth}{!}{\bfseries%
       \parbox{\widthof{Annual Meeting}}
       {\gammnumber\\[-.25ex] Annual Meeting}}%
 
@@ -16,9 +16,9 @@
 
     %\tikz\node[fill=primary,inner sep=0pt,outer sep=0pt]
     \setlength{\fboxsep}{0pt}\colorbox{primary}{\reducedstrut%
-      \parbox{\textwidth}{%
+      \parbox{\linewidth}{%
         \newlength{\mysep}\setlength{\mysep}{2em}
-        \newlength{\innerwidth}\setlength{\innerwidth}{\textwidth}
+        \newlength{\innerwidth}\setlength{\innerwidth}{\linewidth}
         \addtolength{\innerwidth}{-4\mysep}
         \vskip\mysep\hskip\mysep\parbox{\innerwidth}{%
           \color{white}\huge\bfseries
@@ -30,11 +30,11 @@
         }
       }\/% italic correction ensures full coverage of content
     }\\[-\lineskip]
-    \includegraphics[width=\textwidth,height=.66\textwidth]{../coverimage}
+    \includegraphics[width=\linewidth,height=.66\linewidth]{../coverimage}
 
     \vfill
     \includegraphics[height=4em]{../Common/Logos/GAMM}
-    \begin{minipage}[b]{.6\textwidth}
+    \begin{minipage}[b]{.6\linewidth}
       \color{black}\normalsize{\bfseries%
       \uppercase{Gesellschaft} für\\
       \uppercase{Angewandte Mathematik} und \uppercase{Mechanik} e.V.}\\
