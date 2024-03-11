@@ -16,9 +16,9 @@
   left=20mm,
   top=20mm,
 }
-\RequirePackage{titlesec}
+\RequirePackage[raggedleft]{titlesec}
 \titleformat{\chapter}[display]
-  {\normalfont\bfseries}{}{0pt}{\color{primary}\Huge\bfseries}
+  {\normalfont\bfseries}{}{0pt}{\flushright\raggedleft\color{primary}\Huge\bfseries}
 \makeatletter
 \renewcommand{\@pnumwidth}{2em} % avoid overfull page number boxes in TOC
 \renewcommand{\@tocrmarg}{.2em}
@@ -113,6 +113,7 @@
   \par\nopagebreak%
   {\sloppy #9}%
   \vspace*{\stretch{1}}%
+  \par%
 }%
 
 \newcommand{\Plenary}[9]{%
@@ -131,6 +132,7 @@
   \par\nopagebreak%
   {\sloppy #9}%
   \vspace*{\stretch{1}}%
+  \par%
 }%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -140,7 +142,7 @@
 % 2. section organizers                                                        %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newcommand{\Section}[2]{%
-  \pagebreak[0]%
+  \pagebreak[1]%
   \colorbox{primary}{%
     \color{white}%
     \begin{tabularx}{\tablewidth}{@{}p{\widthof{Organizer(s):~}}X@{}}
@@ -176,6 +178,7 @@
   }%
   \par\nopagebreak%
 }%
+%
 \newcommand{\SSession}[7]{%
   \colorbox{secondary}{%
     \color{white}%
@@ -212,6 +215,7 @@
   \par\nopagebreak%
   {\sloppy #5}%
   \vspace*{\stretch{1}}%
+  \par%
 }%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -297,11 +297,11 @@ def make_boa(df):
     inputs  = '\chapter{Prandtl Memorial Lecture and Plenary~Lectures}\n'
     inputs += write_PML(Prandtl, outdir)
     inputs += write_PL(Plenaries, outdir)
-    inputs += '\chapter{Minisymposia and Young Researchers Minisymposia}\n'
+    inputs += '\chapter{Minisymposia and Young~Researchers~Minisymposia}\n'
     inputs += write_minis(Organizers, Minisymposia, YoungResearchers, outdir)
     inputs += '\chapter{DFG Programs}\n'
     inputs += write_dfg(Organizers, DFG, outdir)
-    inputs += '\chapter{Cotributed Sessions}\n'
+    inputs += '\chapter{Contributed Sessions}\n'
     inputs += write_sections(Organizers, Contributed, outdir)
 
     boa = open('./LaTeX/Book_of_abstracts/BookOfAbstracts.tex', 'w', encoding = 'utf-8')
