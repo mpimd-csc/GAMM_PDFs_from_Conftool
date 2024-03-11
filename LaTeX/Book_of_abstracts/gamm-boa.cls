@@ -176,6 +176,18 @@
   }%
   \par\nopagebreak%
 }%
+\newcommand{\SSession}[7]{%
+  \colorbox{secondary}{%
+    \color{white}%
+    \begin{tabularx}{\tablewidth}{@{}p{\widthof{Chair(s):}}X@{}}
+      \multicolumn{2}{@{}p{\tablewidth}@{}}{\bfseries#1:~#2}\\
+      Date:           & #3\hfill #4--#5\\
+      Room:           & #6
+      \ifthenelse{\equal{#7}{}}{}{\\Chair(s):  & \small #7}
+    \end{tabularx}%
+  }%
+  \par\nopagebreak%
+}%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Contribution macro with 5 arguments                                          %
