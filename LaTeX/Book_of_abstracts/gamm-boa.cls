@@ -18,7 +18,7 @@
 }
 \RequirePackage[raggedleft]{titlesec}
 \titleformat{\chapter}[display]
-  {\normalfont\bfseries}{}{0pt}{\flushright\raggedleft\color{primary}\Huge\bfseries}
+  {\normalfont\bfseries}{}{0pt}{\raggedleft\color{primary}\Huge\bfseries}
 \makeatletter
 \renewcommand{\@pnumwidth}{2em} % avoid overfull page number boxes in TOC
 \renewcommand{\@tocrmarg}{.2em}
