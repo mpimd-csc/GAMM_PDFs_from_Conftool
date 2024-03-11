@@ -5,6 +5,9 @@ import re
 
 from html2latex import html2latex 
 
+################################################################################
+# cleaner routine that handles all characters giving plain pdflatex trouble    #
+################################################################################
 def janitor(instr):
     instr = instr.replace(' &', ' \&')
     instr = instr.replace('#', '\\#')
@@ -39,12 +42,14 @@ def janitor(instr):
     instr = instr.replace(u'\u0308', '\\"')
     instr = instr.replace(u'\u0301', '\\\'')
     instr = instr.replace('^2','\\textsuperscript{2}')
-    #instr = instr.replace('^p','\\textsuperscript{p}')
     instr = instr.replace('^m','\\textsuperscript{m}')
-    instr = instr.replace('\percent', '\%')
+    instr = instr.replace('\percent', '\%')# we replaced % by \percent in html2latex 
     instr = instr.replace('\&=', '&=')
     return instr
 
+################################################################################
+# for the daily schedule we need to know how long a contribution is            #
+################################################################################
 def get_duration(start, end):
     start = start.replace(' ', 'T')
     end = end.replace(' ', 'T')
@@ -52,6 +57,10 @@ def get_duration(start, end):
     dt2 = dt.datetime.fromisoformat(end)
     return (dt2-dt1).total_seconds() / 60
 
+################################################################################
+# helper routines fetching row entries from the CSV dataframe into easier to   #
+# handle dictioniaries                                                         #
+################################################################################
 def get_section_info(df, section):
     if section.startswith('DFG-PP'):
         section = section.replace('DFG-PP', 'SPP')
@@ -147,6 +156,9 @@ def get_plenary_info(row):
     }
     return contribution
 
+################################################################################
+# helers for writing the actual section files in LaTeX                         #
+################################################################################
 def write_PML(df, outdir):
     file = open(outdir+'/PML.tex', 'w', encoding='utf-8')
     for index, row in df.iterrows():
@@ -186,7 +198,7 @@ def write_PL(df, outdir):
         inputs += f'\\input{{{fname}}}\n'
     return inputs
 
-def write_section(org, sec, df, outdir):
+def write_section(org, sec, df, outdir, toc_sessions_silent=False):
     fname = sec.replace(' ', '_')
     fullname = outdir+'/'+fname+'.tex'
     file = open(fullname, 'w', encoding='utf-8')
@@ -197,7 +209,11 @@ def write_section(org, sec, df, outdir):
     sessions = df[df['session_short'].str.startswith(sec)]
     for index, row in sessions.iterrows():
         S = get_session_info(row)
-        ostring += f'\\Session{{{S["number"]}}}%\n'
+        if toc_sessions_silent:
+            ostring += '\SSession'
+        else:
+            ostring += '\Session'
+        ostring += f'{{{S["number"]}}}%\n'
         ostring += f'{{{S["name"]}}}%\n'
         ostring += f'{{{S["date"]}}}%\n'
         ostring += f'{{{S["start"]}}}%\n'
@@ -237,32 +253,30 @@ def write_minis(organizers, MS, YRM, outdir):
     inputs = ''
     for i in range(len(MS)):
         name = f'MS{i+1}'
-        fname = write_section(organizers, name, MS, outdir)
+        fname = write_section(organizers, name, MS, outdir,
+                              toc_sessions_silent=True)
         inputs += f'\\input{{{fname}}}\n'
 
     for i in range(len(YRM)):
         name = f'YRM{i+1}'
-        fname = write_section(organizers, name, YRM, outdir)
+        fname = write_section(organizers, name, YRM, outdir,
+                              toc_sessions_silent=True)
         inputs += f'\\input{{{fname}}}\n'
     return inputs
 
 def write_dfg(organizers, df, outdir):
     inputs = ''
     for index, row in df.iterrows():
-        fname = write_section(organizers, row['session_short'], df, outdir)
+        fname = write_section(organizers, row['session_short'], df, outdir,
+                              toc_sessions_silent=True)
         inputs += f'\\input{{{fname}}}\n'
     return inputs
 
-
-def make_boa():
-    # Read the Sessions exported from ConfTool
-    df = pd.read_csv('CSV/sessions.csv', sep=';', quotechar='"')
-    
-    # get rid of empty columns
-    # TODO: preselect the relevant columns to read (see Organizers below)
-    df.dropna(axis='columns', how='all', inplace=True)
-
-
+################################################################################
+# top-level routines for generating the book of abstracts and daily session    #
+# program                                                                      #
+################################################################################
+def make_boa(df):
     # Filter by the categories desired as chapter in the BoA
     DFG              = df[df['session_short'].str.startswith('DFG')].sort_values(by='session_short')
     Prandtl          = df[df['session_short'].str.startswith('PML')].sort_values(by='session_short')
@@ -304,8 +318,19 @@ CONTENTS
     boa.write(contents)
     boa.close()
 
+################################################################################
+# Main function                                                                #
+################################################################################
 def main():
-    make_boa()
+    # Read the Sessions exported from ConfTool
+    df = pd.read_csv('CSV/sessions.csv', sep=';', quotechar='"')
+    
+    # get rid of empty columns
+    # TODO: preselect the relevant columns to read (see Organizers in make_boa)
+    df.dropna(axis='columns', how='all', inplace=True)
+
+
+    make_boa(df)
 
 if __name__ == "__main__":
     main()
