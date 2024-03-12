@@ -3,7 +3,7 @@ import datetime as dt
 import pandas as pd
 import re
 
-from html2latex import html2latex 
+from html2latex import html2latex
 
 ################################################################################
 # cleaner routine that handles all characters giving plain pdflatex trouble    #
@@ -43,12 +43,13 @@ def janitor(instr):
     instr = instr.replace(u'\u0301', '\\\'')
     instr = instr.replace('^2','\\textsuperscript{2}')
     instr = instr.replace('^m','\\textsuperscript{m}')
-    instr = instr.replace('\percent', '\%')# we replaced % by \percent in html2latex 
+    instr = instr.replace('\percent', '\%')# we replaced % by \percent in html2latex
     instr = instr.replace('\&=', '&=')
     return instr
 
 ################################################################################
-# for the daily schedule we need to know how long a contribution is            #
+# for the daily schedule we need to know how long a contribution is,           #
+# and advance time by 20 minutes                                               #
 ################################################################################
 def get_duration(start, end):
     start = start.replace(' ', 'T')
@@ -56,6 +57,10 @@ def get_duration(start, end):
     dt1 = dt.datetime.fromisoformat(start)
     dt2 = dt.datetime.fromisoformat(end)
     return (dt2-dt1).total_seconds() / 60
+
+def advance_slot(start, times):
+    delta = dt.timedelta(seconds=times*1200)
+    return start + delta
 
 ################################################################################
 # helper routines fetching row entries from the CSV dataframe into easier to   #
@@ -121,13 +126,22 @@ def get_contribution_info(row, idx):
         return None
     authors = row[pauthors]
     authors = authors.replace(presenter, f'\\underline{{{presenter}}}')
+    if row['session_short'].startswith('Poster'):
+        duration = 0 
+    else:
+        duration = get_duration(row[pstart], row[pend])
+    if row[pabstract] != row[pabstract]:
+        abstract = ''
+    else:
+        abstract = html2latex(row[pabstract])
     contribution = {
-        "title"    : row[ptitle],
-        "authors"  : authors,
-        "start"    : row[pstart],
-        "end"      : row[pend],
-        "duration" : get_duration(row[pstart], row[pend]),
-        "abstract" : html2latex(row[pabstract]),
+        "title"         : row[ptitle],
+        "authors"       : authors,
+        "presenter"     : presenter,
+        "start"         : row[pstart],
+        "end"           : row[pend],
+        "duration"      : duration,
+        "abstract"      : abstract,
         "organizations" : row[porgas]
     }
     return contribution
@@ -179,7 +193,7 @@ def write_PML(df, outdir):
 
 def write_PL(df, outdir):
     inputs = ''
-    for index, row in df.iterrows():        
+    for index, row in df.iterrows():
         PL = get_plenary_info(row)
         fname = f'{PL["session"]}.tex'
         file = open(outdir+'/'+fname, 'w', encoding='utf-8')
@@ -225,8 +239,8 @@ def write_section(org, sec, df, outdir, toc_sessions_silent=False):
             if C is None:
                 break
             organizations = C["organizations"]
-            organizations = organizations.replace('; ','\\newline ')   
-            start = re.sub('^.* ','', C["start"])              
+            organizations = organizations.replace('; ','\\newline ')
+            start = re.sub('^.* ','', C["start"])
             ostring += f'\\Contribution{{{C["title"]}}}%\n'
             ostring += f'{{{C["authors"]}}}%\n'
             ostring += f'{{{start}}}%\n'
@@ -273,6 +287,77 @@ def write_dfg(organizers, df, outdir):
     return inputs
 
 ################################################################################
+# routine for writing the tables in the daily session program                 #
+################################################################################
+def make_session_table(SAT, start, n):
+    match n:
+        case 1:
+            inputs = '\\begin{longtable}{PA|}\n'
+        case 3:
+            inputs = '\\begin{longtable}{Pxyx|}\n'
+        case 6:
+            inputs = '\\begin{longtable}{PXYXYXY|}\n'
+        case 16: #this is the same magic 16 as in make_dsp working for 2024's GAMM
+            inputs = '\\begin{longtable}{PA|}\n'
+        case _: # non-standard session length
+            raise SystemExit('non-standard session length detected')
+
+    inputs += '    \\rowcolor{primary}'
+    if n != 16:
+        k = n
+    else:
+        k = 1 # Exception for Poster session 
+    for i in range(k):
+        slot_start = advance_slot(start, i).strftime("%H:%M")
+        inputs += f'&\\white{{{slot_start}}}'
+    inputs += '\\\\\n\endhead\n'
+    skip = False
+    for index, row in SAT.iterrows():
+        sname = row['session_short']
+        inputs += f'\\white{{{sname}}}'
+        j = 0
+        drop_extra_empty = False
+        for i in range(n):
+            if not skip:
+                j += 1
+                contribution = get_contribution_info(row, j)
+                if contribution is None:
+                    if not drop_extra_empty:
+                        inputs += '\n&'
+                else:
+                    match contribution["duration"]:
+                        case 60:
+                            inputs += f'\n&\\footnotesize{{\\bfseries {contribution["title"]}}}\\newline\itshape {contribution["presenter"]}'
+                        case 40: 
+                            skip = True # found a topical speaker double slot and skip next
+                            match n:
+                                case 3:
+                                    inputs += '\n&\multicolumn{2}{t}'
+                                case 6:          
+                                    inputs += '\n&\multicolumn{2}{T}'
+                            inputs += f'{{\\footnotesize{{\\bfseries {contribution["title"]}}}\\newline{{\itshape {contribution["presenter"]}}}}}'          
+                        case 30:
+                            match j:
+                                case 1:
+                                    drop_extra_empty = True
+                                    inputs += '\n&\multicolumn{6}{A}{\\noindent\\begin{tabularx}{\linewidth}{@{}BCBC@{}}'
+                                    inputs += f'\\footnotesize{{\\bfseries {contribution["title"]}}}\\newline{{\itshape {contribution["presenter"]}}}'          
+                                case 4:
+                                    inputs += f'\n&\\footnotesize{{\\bfseries {contribution["title"]}}}\\newline{{\itshape {contribution["presenter"]}}}'
+                                    inputs += '\end{tabularx}}'
+                                case _:
+                                    inputs += f'\n&\\footnotesize{{\\bfseries {contribution["title"]}}}\\newline{{\itshape {contribution["presenter"]}}}'          
+                        case 20:
+                            inputs += f'\n&\\footnotesize{{\\bfseries {contribution["title"]}}}\\newline\itshape {contribution["presenter"]}'
+                        case 0: # we explicitly set 0 for posters
+                            inputs += f'\n&\\footnotesize{{\\bfseries {contribution["title"]}}}\\newline\itshape {contribution["presenter"]}\\\\\\arrayrulecolor{{primary}}\\hline'
+            else:
+                skip = False
+        inputs += '\\\\\\arrayrulecolor{primary}\\hline\n'         
+    inputs += '\end{longtable}\n'
+    return janitor(inputs)
+
+################################################################################
 # top-level routines for generating the book of abstracts and daily session    #
 # program                                                                      #
 ################################################################################
@@ -286,9 +371,9 @@ def make_boa(df):
     Contributed      = df[df['session_short'].str.startswith('S')].sort_values(by='session_short')
 
     # Read the relevant Organizer information exported from ConfTool
-    Organizers = pd.read_csv('CSV/organizers.csv', 
-                            sep=';', 
-                            quotechar='"', 
+    Organizers = pd.read_csv('CSV/organizers.csv',
+                            sep=';',
+                            quotechar='"',
                             usecols=['track_type', 'name', 'firstname', 'organisation'])
     # drop everyone whos not a session organizer and sort by sections
     Organizers = Organizers[Organizers.track_type.notnull()].sort_values(by='track_type')
@@ -318,19 +403,58 @@ CONTENTS
     boa.write(contents)
     boa.close()
 
+def make_dsp(df):
+    df = df.sort_values(by='session_start')
+    session_starts = df['session_start'].unique()
+
+    dsp = open('./LaTeX/Daily_Session_Plans/Daily_Session_Plan.tex', 'w', encoding = 'utf-8')
+
+    inputs = ''
+    old_day = ''
+    for session in session_starts:
+        start = dt.datetime.fromisoformat(session.replace(' ', 'T'))
+        day = start.strftime("%A %B %d")
+        if old_day != day:
+            old_day = day
+            inputs += f'\\chapter{{{day}}}\n'
+        #inputs += f'\\section*{{{start.strftime("%H:%M")}}}\n'
+        SAT = df[df['session_start'] == session].sort_values(by='session_short') # session at time
+        length = get_duration(session, SAT['session_end'].values[0])
+        if len(SAT) == 1: # only one parallel session, i.e. Plenary or Poster
+            if SAT['session_short'].values[0].startswith('PL'):
+                inputs += make_session_table(SAT, start, int(1))
+            if SAT['session_short'].values[0].startswith('Poster'):
+                inputs += make_session_table(SAT, start, int(16)) # TODO 16 seems to be the maximum for this conference. This may need fixing
+        else:
+            num_slots = length / 20
+            inputs += make_session_table(SAT, start, int(num_slots))
+    contents = '''
+\documentclass[colorlinks]{gamm-dsp}
+
+\\begin{document}
+\\tableofcontents
+
+CONTENTS
+
+\end{document}
+'''
+    contents = contents.replace('CONTENTS', inputs)
+    dsp.write(contents)
+    dsp.close()
+
 ################################################################################
 # Main function                                                                #
 ################################################################################
 def main():
     # Read the Sessions exported from ConfTool
     df = pd.read_csv('CSV/sessions.csv', sep=';', quotechar='"')
-    
+
     # get rid of empty columns
     # TODO: preselect the relevant columns to read (see Organizers in make_boa)
-    df.dropna(axis='columns', how='all', inplace=True)
-
+    #df.dropna(axis='columns', how='all', inplace=True)
 
     make_boa(df)
+    make_dsp(df)
 
 if __name__ == "__main__":
     main()

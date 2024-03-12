@@ -18,12 +18,9 @@
   top=20mm,
 }
 \RequirePackage[raggedleft]{titlesec}
-\titleformat{\chapter}[display]
-  {\normalfont\bfseries}{}{0pt}{\raggedleft\color{primary}\Huge\bfseries}
-\makeatletter
-\renewcommand{\@pnumwidth}{2em} % avoid overfull page number boxes in TOC
-\renewcommand{\@tocrmarg}{.2em}
-\makeatother
+\titleformat{\chapter}[display]{\normalfont\bfseries}{}{0pt}{\raggedleft\color{primary}\Huge\bfseries}
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Class options                                                                %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -43,6 +40,8 @@
 
 % colors and colored tables
 \RequirePackage[table]{xcolor}
+\newcommand{\white}[1]{\textcolor{white}{\Large\bfseries #1}}
+
 
 % Load this year's base information
 \RequirePackage{../this-gamm}
@@ -69,7 +68,20 @@
 \RequirePackage[T1]{fontenc}
 \RequirePackage[ngerman,american]{babel}
 
-\RequirePackage{ltxtable}
+\RequirePackage{longtable, ragged2e, tabularx}
+\newcolumntype{A}{>{\RaggedRight}p{23.1cm}}
+\newcolumntype{T}{>{\RaggedRight\cellcolor{secondary!20}}p{7.42cm}}
+\newcolumntype{B}{>{\RaggedRight}p{5.465cm}}
+\newcolumntype{C}{>{\RaggedRight\leavevmode\color{white}\columncolor{tertiary}}B}
+\newcolumntype{X}{>{\RaggedRight}p{3.5cm}}
+\newcolumntype{Y}{>{\RaggedRight\leavevmode\color{white}\columncolor{tertiary}}X}
+\newcolumntype{x}{>{\RaggedRight}p{7.4cm}}
+\newcolumntype{t}{>{\RaggedRight\cellcolor{secondary!20}}p{15.22cm}}
+\newcolumntype{y}{>{\RaggedRight\leavevmode\color{white}\columncolor{tertiary}}x}
+\newcolumntype{P}{>{\columncolor{primary}}m{2cm}}
+
+
+
 \usepackage{makeidx}
 \makeindex
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -81,4 +93,5 @@
   \begin{landscape}
     \maketitle
   \end{landscape}
+  \renewcommand{\arraystretch}{1.5}
 }
