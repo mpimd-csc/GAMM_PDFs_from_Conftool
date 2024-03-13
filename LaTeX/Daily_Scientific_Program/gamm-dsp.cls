@@ -3,7 +3,7 @@
 % Written by Jens Saak, March 2024                                             %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{gamm-boa}[2024/03/18 GAMM book of abstracts class]
+\ProvidesClass{gamm-dsp}[2024/03/18 GAMM scientifc program class]
 
 % pick report as th base class
 \LoadClass[10pt, oneside]{report}
@@ -88,7 +88,7 @@
 % Title page and maketitle                                                     %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \RequirePackage{../Common/gamm-titlepage}
-\renewcommand{\maketitle}{\gammtitle{Daily Session Plan}}
+\renewcommand{\maketitle}{\gammtitle{Daily Scientific Program}}
 \AtBeginDocument{%
   \begin{landscape}
     \maketitle

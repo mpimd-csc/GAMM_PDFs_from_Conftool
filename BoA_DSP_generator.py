@@ -391,8 +391,7 @@ def make_boa(df):
     inputs += write_sections(Organizers, Contributed, outdir)
 
     boa = open('./LaTeX/Book_of_abstracts/BookOfAbstracts.tex', 'w', encoding = 'utf-8')
-    contents = '''
-\\documentclass[colorlinks]{gamm-boa}
+    contents = '''\\documentclass[colorlinks]{gamm-boa}
 
 \\begin{document}
 \\tableofcontents
@@ -408,7 +407,7 @@ def make_dsp(df):
     df = df.sort_values(by='session_start')
     session_starts = df['session_start'].unique()
 
-    dsp = open('./LaTeX/Daily_Session_Plans/Daily_Session_Plan.tex', 'w', encoding = 'utf-8')
+    dsp = open('./LaTeX/Daily_Scientific_Program/Daily_Scientific_Program.tex', 'w', encoding = 'utf-8')
 
     inputs = ''
     old_day = ''
@@ -429,8 +428,7 @@ def make_dsp(df):
         else:
             num_slots = length / 20
             inputs += make_session_table(SAT, start, int(num_slots))
-    contents = '''
-\documentclass[colorlinks]{gamm-dsp}
+    contents = '''\documentclass[colorlinks]{gamm-dsp}
 
 \\begin{document}
 \\tableofcontents
