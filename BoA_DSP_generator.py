@@ -314,7 +314,8 @@ def make_session_table(SAT, start, n):
     skip = False
     for index, row in SAT.iterrows():
         sname = row['session_short']
-        inputs += f'\\white{{{sname}}}'
+        sroom = row['session_room']
+        inputs += f'\\white{{{sname}}}\\newline\\white{{\small ({sroom})}}'
         j = 0
         drop_extra_empty = False
         for i in range(n):
@@ -421,7 +422,7 @@ def make_dsp(df):
         SAT = df[df['session_start'] == session].sort_values(by='session_short') # session at time
         length = get_duration(session, SAT['session_end'].values[0])
         if len(SAT) == 1: # only one parallel session, i.e. Plenary or Poster
-            if SAT['session_short'].values[0].startswith('PL'):
+            if SAT['session_short'].values[0].startswith('PL') | SAT['session_short'].values[0].startswith('PML'):
                 inputs += make_session_table(SAT, start, int(1))
             if SAT['session_short'].values[0].startswith('Poster'):
                 inputs += make_session_table(SAT, start, int(16)) # TODO 16 seems to be the maximum for this conference. This may need fixing
