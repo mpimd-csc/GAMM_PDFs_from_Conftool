@@ -58,8 +58,12 @@ def get_duration(start, end):
     dt2 = dt.datetime.fromisoformat(end)
     return (dt2-dt1).total_seconds() / 60
 
-def advance_slot(start, times):
-    delta = dt.timedelta(seconds=times*1200)
+def advance_slot(start, times, slot=20):
+    match slot:
+        case 20:
+            delta = dt.timedelta(seconds=times*1200)
+        case 30:
+            delta = dt.timedelta(seconds=times*1800)
     return start + delta
 
 ################################################################################
@@ -316,9 +320,9 @@ def make_session_table(SAT, start, n):
         sname = row['session_short']
         sroom = row['session_room']
         inputs += f'\\white{{{sname}}}\\newline\\white{{\small ({sroom})}}'
-        j = 0
+        j = 0 # j counts speakers/contributions in the session CSV
         drop_extra_empty = False
-        for i in range(n):
+        for i in range(n): # i counts table columns
             if not skip:
                 j += 1
                 contribution = get_contribution_info(row, j)
@@ -338,23 +342,28 @@ def make_session_table(SAT, start, n):
                                     inputs += '\n&\multicolumn{2}{T}'
                             inputs += f'{{\\footnotesize{{\\bfseries {contribution["title"]}}}\\newline{{\itshape {contribution["presenter"]}}}}}'          
                         case 30:
-                            match j:
-                                case 1:
+                            match i:
+                                case 0:
                                     drop_extra_empty = True
                                     inputs += '\n&\multicolumn{6}{A}{\\noindent\\begin{tabularx}{\linewidth}{@{}BCBC@{}}'
                                     inputs += f'\\footnotesize{{\\bfseries {contribution["title"]}}}\\newline{{\itshape {contribution["presenter"]}}}'          
-                                case 4:
+                                case 3:
                                     inputs += f'\n&\\footnotesize{{\\bfseries {contribution["title"]}}}\\newline{{\itshape {contribution["presenter"]}}}'
                                     inputs += '\end{tabularx}}'
                                 case _:
                                     inputs += f'\n&\\footnotesize{{\\bfseries {contribution["title"]}}}\\newline{{\itshape {contribution["presenter"]}}}'          
                         case 20:
-                            inputs += f'\n&\\footnotesize{{\\bfseries {contribution["title"]}}}\\newline\itshape {contribution["presenter"]}'
+                            shift = get_duration(advance_slot(start,i).isoformat(), contribution["start"])
+                            if shift > 0: # there is a gap in the schedule
+                                inputs += '\n&' # add empty cell
+                                j -= 1 # revisit contribution for next column
+                            else:
+                                inputs += f'\n&\\footnotesize{{\\bfseries {contribution["title"]}}}\\newline\itshape {contribution["presenter"]}'
                         case 0: # we explicitly set 0 for posters
-                            inputs += f'\n&\\footnotesize{{\\bfseries {contribution["title"]}}}\\newline\itshape {contribution["presenter"]}\\\\\\arrayrulecolor{{primary}}\\hline'
+                            inputs += f'\n&\\footnotesize{{\\bfseries {contribution["title"]}}}\\newline\itshape {contribution["presenter"]}\\\\\\hline'
             else:
                 skip = False
-        inputs += '\\\\\\arrayrulecolor{primary}\\hline\n'         
+        inputs += '\\\\\\hline\n'         
     inputs += '\end{longtable}\n'
     return janitor(inputs)
 
@@ -432,6 +441,7 @@ def make_dsp(df):
 
 \\begin{document}
 \\tableofcontents
+\\arrayrulecolor{primary}
 
 CONTENTS
 
