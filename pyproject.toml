@@ -7,7 +7,7 @@ dependencies = [
   "datetime",
 ]
 
-requires-python = ">=3"
+requires-python = ">=3.10"
 
 authors = [
   {name = "Jens Saak", email = "saak@mpi-magdeburg.mpg.de"},
@@ -17,7 +17,7 @@ maintainers = [
   {name = "Jens Saal", email = "saak@mpi-magdeburg.mpg.de"}
 ]
 
-description = "Book of Abstract generator for GAMM annusl meetings based on ConfTool data exports."
+description = "Book of Abstract generator for GAMM annual meetings based on ConfTool data exports."
 
 readme = "README.md"
 
