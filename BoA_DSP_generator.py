@@ -385,6 +385,12 @@ def make_room_session_table(row, template, room, day):
                 cstart = dt.datetime.fromisoformat(contribution["start"].replace(' ','T')).strftime("%H:%M")
             inputs += f'{cstart}&\n'
             inputs += f'\\textbf{{{contribution["title"]}}}\\newline\\textit{{{contribution["presenter"]}}}\\\\\hline\n'
+        else:
+            if (session == 'RvML') and (i == 1):
+                cstart = start.strftime("%H:%M")
+                inputs += f'{cstart}&\n'
+                inputs += '\\textbf{Will be announced in the Opening}\\\\\hline\n'
+
     inputs += '\end{tabularx}\n\end{samepage}\n'
     
     return janitor(inputs)
@@ -443,7 +449,7 @@ def make_dsp(df):
     old_day = ''
     for session in session_starts:
         start = dt.datetime.fromisoformat(session.replace(' ', 'T'))
-        day = start.strftime("%A %B %d")
+        day = start.strftime("%A, %B %d")
         if old_day != day:
             old_day = day
             inputs += f'\\chapter{{{day}}}\n'
@@ -489,7 +495,7 @@ def make_room_plans(df):
         old_day = ''
         inputs = ''
         for index, row in sessions.iterrows():
-            day = dt.datetime.fromisoformat(row['session_start'].replace(' ','T')).strftime("%A %B %d")
+            day = dt.datetime.fromisoformat(row['session_start'].replace(' ','T')).strftime("%A, %B %d")
             if old_day != day:
                 old_day = day
                 inputs += '\n\pagebreak[4]'
