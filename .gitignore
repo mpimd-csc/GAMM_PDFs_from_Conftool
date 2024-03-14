@@ -71,8 +71,9 @@ CSV/speakers.csv
 CSV/organizers.csv
 HTML/*.html
 LaTeX/Book_of_abstracts/BookOfAbstracts.tex
-LaTeX/Daily_Scientific_Program/Daily_Scientific_Program.tex
 LaTeX/Book_of_abstracts/Sessions/*.tex
+LaTeX/Daily_Scientific_Program/Daily_Scientific_Program.tex
+LaTeX/Daily_Scientific_Program/rooms/*.tex
 .secret
 .url
 all_abstracts.tex

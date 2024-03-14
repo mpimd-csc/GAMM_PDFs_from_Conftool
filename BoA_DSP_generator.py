@@ -131,7 +131,7 @@ def get_contribution_info(row, idx):
     authors = row[pauthors]
     authors = authors.replace(presenter, f'\\underline{{{presenter}}}')
     if row['session_short'].startswith('Poster'):
-        duration = 0 
+        duration = 0
     else:
         duration = get_duration(row[pstart], row[pend])
     if row[pabstract] != row[pabstract]:
@@ -310,7 +310,7 @@ def make_session_table(SAT, start, n):
     if n != 16:
         k = n
     else:
-        k = 1 # Exception for Poster session 
+        k = 1 # Exception for Poster session
     for i in range(k):
         slot_start = advance_slot(start, i).strftime("%H:%M")
         inputs += f'&\\white{{{slot_start}}}'
@@ -333,25 +333,25 @@ def make_session_table(SAT, start, n):
                     match contribution["duration"]:
                         case 60:
                             inputs += f'\n&\\footnotesize{{\\bfseries {contribution["title"]}}}\\newline\itshape {contribution["presenter"]}'
-                        case 40: 
+                        case 40:
                             skip = True # found a topical speaker double slot and skip next
                             match n:
                                 case 3:
                                     inputs += '\n&\multicolumn{2}{t}'
-                                case 6:          
+                                case 6:
                                     inputs += '\n&\multicolumn{2}{T}'
-                            inputs += f'{{\\footnotesize{{\\bfseries {contribution["title"]}}}\\newline{{\itshape {contribution["presenter"]}}}}}'          
+                            inputs += f'{{\\footnotesize{{\\bfseries {contribution["title"]}}}\\newline{{\itshape {contribution["presenter"]}}}}}'
                         case 30:
                             match i:
                                 case 0:
                                     drop_extra_empty = True
                                     inputs += '\n&\multicolumn{6}{A}{\\noindent\\begin{tabularx}{\linewidth}{@{}BCBC@{}}'
-                                    inputs += f'\\footnotesize{{\\bfseries {contribution["title"]}}}\\newline{{\itshape {contribution["presenter"]}}}'          
+                                    inputs += f'\\footnotesize{{\\bfseries {contribution["title"]}}}\\newline{{\itshape {contribution["presenter"]}}}'
                                 case 3:
                                     inputs += f'\n&\\footnotesize{{\\bfseries {contribution["title"]}}}\\newline{{\itshape {contribution["presenter"]}}}'
                                     inputs += '\end{tabularx}}'
                                 case _:
-                                    inputs += f'\n&\\footnotesize{{\\bfseries {contribution["title"]}}}\\newline{{\itshape {contribution["presenter"]}}}'          
+                                    inputs += f'\n&\\footnotesize{{\\bfseries {contribution["title"]}}}\\newline{{\itshape {contribution["presenter"]}}}'
                         case 20:
                             shift = get_duration(advance_slot(start,i).isoformat(), contribution["start"])
                             if shift > 0: # there is a gap in the schedule
@@ -363,10 +363,31 @@ def make_session_table(SAT, start, n):
                             inputs += f'\n&\\footnotesize{{\\bfseries {contribution["title"]}}}\\newline\itshape {contribution["presenter"]}\\\\\\hline'
             else:
                 skip = False
-        inputs += '\\\\\\hline\n'         
+        inputs += '\\\\\\hline\n'
     inputs += '\end{longtable}\n'
     return janitor(inputs)
 
+def make_room_session_table(row, template, room, day):
+    start = dt.datetime.fromisoformat(row['session_start'].replace(' ','T'))
+    end = dt.datetime.fromisoformat(row['session_end'].replace(' ','T'))
+    stime = start.strftime("%H:%M")
+    etime = end.strftime("%H:%M")
+    inputs  = f'\n\\begin{{samepage}}\n\\section*{{{day}\hfill{stime}--{etime}}}\n'
+    session = row['session_short']
+    inputs += f'\n\\begin{{center}}\huge\\bfseries {session}\end{{center}}\n'
+    inputs += '\\begin{tabularx}{\linewidth}{|A|B|}\n\hline\n'
+    for i in range(1,7):
+        contribution = get_contribution_info(row, i)
+        if contribution is not None:
+            if contribution["duration"] == 0: # set explicitly for posters
+                cstart = start.strftime("%H:%M")
+            else:
+                cstart = dt.datetime.fromisoformat(contribution["start"].replace(' ','T')).strftime("%H:%M")
+            inputs += f'{cstart}&\n'
+            inputs += f'\\textbf{{{contribution["title"]}}}\\newline\\textit{{{contribution["presenter"]}}}\\\\\hline\n'
+    inputs += '\end{tabularx}\n\end{samepage}\n'
+    
+    return janitor(inputs)
 ################################################################################
 # top-level routines for generating the book of abstracts and daily session    #
 # program                                                                      #
@@ -451,6 +472,33 @@ CONTENTS
     dsp.write(contents)
     dsp.close()
 
+def make_room_plans(df):
+    outdir = './LaTeX/Daily_Scientific_Program/rooms/'
+    df = df.sort_values(by='session_room')
+
+    template_file = open('./LaTeX/Daily_Scientific_Program/room_template.tex', 'r', encoding = 'utf-8')
+    template = template_file.read()
+    template_file.close()
+
+    rooms = df['session_room'].unique()
+    for room in rooms:
+        print(f'Generating room: {room}\n')
+        sessions = df[df['session_room'] == room].sort_values(by='session_start')
+        room = room.replace('/', '-')
+        room_file = open(f'{outdir}{room}.tex', 'w', encoding = 'utf-8')
+        old_day = ''
+        inputs = ''
+        for index, row in sessions.iterrows():
+            day = dt.datetime.fromisoformat(row['session_start'].replace(' ','T')).strftime("%A %B %d")
+            if old_day != day:
+                old_day = day
+                inputs += '\n\pagebreak[4]'
+            inputs += make_room_session_table(row, template, room, day)
+        contents = template.replace('ROOM', room)
+        contents = contents.replace('CONTENTS', inputs)
+        room_file.write(contents)
+
+
 ################################################################################
 # Main function                                                                #
 ################################################################################
@@ -464,6 +512,7 @@ def main():
 
     make_boa(df)
     make_dsp(df)
+    make_room_plans(df)
 
 if __name__ == "__main__":
     main()
