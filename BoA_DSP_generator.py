@@ -327,8 +327,11 @@ def make_session_table(SAT, start, n):
                 j += 1
                 contribution = get_contribution_info(row, j)
                 if contribution is None:
-                    if not drop_extra_empty:
-                        inputs += '\n&'
+                    if sname == 'RvML':
+                        inputs += '\n&\\footnotesize{\\bfseries Price winner(s) and title(s) will be announced in the Opening}'
+                    else:
+                        if not drop_extra_empty:
+                            inputs += '\n&'
                 else:
                     match contribution["duration"]:
                         case 60:
@@ -389,7 +392,7 @@ def make_room_session_table(row, template, room, day):
             if (session == 'RvML') and (i == 1):
                 cstart = start.strftime("%H:%M")
                 inputs += f'{cstart}&\n'
-                inputs += '\\textbf{Will be announced in the Opening}\\\\\hline\n'
+                inputs += '\\textbf{Price winner(s) and title(s) will be announced in the Opening}\\\\\hline\n'
 
     inputs += '\end{tabularx}\n\end{samepage}\n'
     
@@ -457,7 +460,7 @@ def make_dsp(df):
         SAT = df[df['session_start'] == session].sort_values(by='session_short') # session at time
         length = get_duration(session, SAT['session_end'].values[0])
         if len(SAT) == 1: # only one parallel session, i.e. Plenary or Poster
-            if SAT['session_short'].values[0].startswith('PL') | SAT['session_short'].values[0].startswith('PML'):
+            if SAT['session_short'].values[0].startswith('PL') | SAT['session_short'].values[0].startswith('PML') | SAT['session_short'].values[0].startswith('RvML'):
                 inputs += make_session_table(SAT, start, int(1))
             if SAT['session_short'].values[0].startswith('Poster'):
                 inputs += make_session_table(SAT, start, int(16)) # TODO 16 seems to be the maximum for this conference. This may need fixing
