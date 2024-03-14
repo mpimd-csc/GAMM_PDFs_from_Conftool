@@ -46,6 +46,13 @@
 % Load this year's base information
 \RequirePackage{../this-gamm}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% List of authors is generated as index                                        %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{multicol,imakeidx}
+\makeindex[columns=4, title=Alphabetical Speaker Index, intoc]
+\newcommand{\presenter}[1]{\textit{#1}\index{#1}}
+
 \ifhidelinks%
   \RequirePackage[%
     colorlinks = false,
@@ -80,10 +87,6 @@
 \newcolumntype{y}{>{\RaggedRight\leavevmode\color{white}\columncolor{tertiary}}x}
 \newcolumntype{P}{>{\columncolor{primary}}m{2cm}}
 
-
-
-\usepackage{makeidx}
-\makeindex
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Title page and maketitle                                                     %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

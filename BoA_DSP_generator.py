@@ -129,7 +129,7 @@ def get_contribution_info(row, idx):
     if pd.isna(presenter):
         return None
     authors = row[pauthors]
-    authors = authors.replace(presenter, f'\\underline{{{presenter}}}')
+    authors = authors.replace(presenter, f'\\presenter{{{presenter}}}')
     if row['session_short'].startswith('Poster'):
         duration = 0
     else:
@@ -158,9 +158,9 @@ def get_plenary_info(row):
     else:
         chair = row['chair1']
     if pd.isna(row['p1_organisations']):
-        speaker = row['p1_presenting_author']
+        speaker = '\presenter{' + row['p1_presenting_author'] + '}'
     else:
-        speaker = row['p1_presenting_author'] + ' {\\em (' + row['p1_organisations'] + ')}'
+        speaker = '\presenter{' + row['p1_presenting_author'] + '} {\\em (' + row['p1_organisations'] + ')}'
     contribution = {
         "session"  : row['session_short'],
         "title"    : row['p1_title'],
@@ -335,7 +335,7 @@ def make_session_table(SAT, start, n):
                 else:
                     match contribution["duration"]:
                         case 60:
-                            inputs += f'\n&\\footnotesize{{\\bfseries {contribution["title"]}}}\\newline\itshape {contribution["presenter"]}'
+                            inputs += f'\n&\\footnotesize{{\\bfseries {contribution["title"]}}}\\newline\presenter{{{contribution["presenter"]}}}'
                         case 40:
                             skip = True # found a topical speaker double slot and skip next
                             match n:
@@ -343,27 +343,27 @@ def make_session_table(SAT, start, n):
                                     inputs += '\n&\multicolumn{2}{t}'
                                 case 6:
                                     inputs += '\n&\multicolumn{2}{T}'
-                            inputs += f'{{\\footnotesize{{\\bfseries {contribution["title"]}}}\\newline{{\itshape {contribution["presenter"]}}}}}'
+                            inputs += f'{{\\footnotesize{{\\bfseries {contribution["title"]}}}\\newline\presenter{{{contribution["presenter"]}}}}}'
                         case 30:
                             match i:
                                 case 0:
                                     drop_extra_empty = True
                                     inputs += '\n&\multicolumn{6}{A}{\\noindent\\begin{tabularx}{\linewidth}{@{}BCBC@{}}'
-                                    inputs += f'\\footnotesize{{\\bfseries {contribution["title"]}}}\\newline{{\itshape {contribution["presenter"]}}}'
+                                    inputs += f'\\footnotesize{{\\bfseries {contribution["title"]}}}\\newline\presenter{{{contribution["presenter"]}}}'
                                 case 3:
-                                    inputs += f'\n&\\footnotesize{{\\bfseries {contribution["title"]}}}\\newline{{\itshape {contribution["presenter"]}}}'
+                                    inputs += f'\n&\\footnotesize{{\\bfseries {contribution["title"]}}}\\newline\presenter{{{contribution["presenter"]}}}'
                                     inputs += '\end{tabularx}}'
                                 case _:
-                                    inputs += f'\n&\\footnotesize{{\\bfseries {contribution["title"]}}}\\newline{{\itshape {contribution["presenter"]}}}'
+                                    inputs += f'\n&\\footnotesize{{\\bfseries {contribution["title"]}}}\\newline\presenter{{{contribution["presenter"]}}}'
                         case 20:
                             shift = get_duration(advance_slot(start,i).isoformat(), contribution["start"])
                             if shift > 0: # there is a gap in the schedule
                                 inputs += '\n&' # add empty cell
                                 j -= 1 # revisit contribution for next column
                             else:
-                                inputs += f'\n&\\footnotesize{{\\bfseries {contribution["title"]}}}\\newline\itshape {contribution["presenter"]}'
+                                inputs += f'\n&\\footnotesize{{\\bfseries {contribution["title"]}}}\\newline\presenter{{{contribution["presenter"]}}}'
                         case 0: # we explicitly set 0 for posters
-                            inputs += f'\n&\\footnotesize{{\\bfseries {contribution["title"]}}}\\newline\itshape {contribution["presenter"]}\\\\\\hline'
+                            inputs += f'\n&\\footnotesize{{\\bfseries {contribution["title"]}}}\\newline\presenter{{{contribution["presenter"]}}}\\\\\\hline'
             else:
                 skip = False
         inputs += '\\\\\\hline\n'
@@ -474,7 +474,7 @@ def make_dsp(df):
 \\arrayrulecolor{primary}
 
 CONTENTS
-
+\printindex
 \end{document}
 '''
     contents = contents.replace('CONTENTS', inputs)

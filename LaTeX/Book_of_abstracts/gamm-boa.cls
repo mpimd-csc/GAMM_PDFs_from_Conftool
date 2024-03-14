@@ -46,6 +46,16 @@
 % Load this year's base information
 \RequirePackage{../this-gamm}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% List of authors is generated as index                                        %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{multicol,imakeidx}
+\makeindex[title=Alphabetical Speaker Index, intoc]
+\newcommand{\presenter}[1]{\underline{#1}\index{#1}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% hyperref for clickable links                                                 %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \ifhidelinks%
   \RequirePackage[%
     colorlinks = false,
@@ -70,8 +80,7 @@
 \RequirePackage{ifthen}
 \RequirePackage{amsmath, amsfonts, amssymb}
 \RequirePackage{upgreek}
-\usepackage{makeidx}
-\makeindex
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Title page and maketitle                                                     %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -220,24 +229,6 @@
   \vspace*{\stretch{1}}%
   \par%
 }%
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% List of authors is generated as index                                        %
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\usepackage{multicol,makeidx}
-\makeindex
-\makeatletter
-\renewenvironment{theindex}{%
-  \setlength{\columnsep}{3em}%
-  \begin{multicols}{2}%
-    \thispagestyle{plain}\parindent\z@
-    \small
-    \parskip\z@ \@plus .3\p@\relax
-    \columnseprule \z@
-    \columnsep 35\p@
-    \let\item\@idxitem
-  }{\end{multicols}}
-\makeatother
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Input path for Contributions                                                 %
