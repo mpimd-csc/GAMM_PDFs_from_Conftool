@@ -18,7 +18,9 @@
 
 ## REST API data fetcher
 
-`get_conftool_data.py` is a script connecting to the ConfTool instance
+### `get_conftool_data.py`
+
+This is a script connecting to the ConfTool Pro instance
 via ConfTool's REST API.  It relies on the hidden files
 
 + `.secret`
@@ -39,8 +41,25 @@ in the `CSV` directory. The actual generator only uses `sessions.csv`
 and `organizers.csv`, the others can be useful for consistency checks,
 as ConfTool adds hints where it suspects duplicates.
 
-`BoA_DSP_generator.py` this is the actual generator script that can be
-run once the CSV files have been fetched. It does three things:
+To fill `.url` and `.secret`, first you need to enable the REST
+interface of ConfTool Pro. Otherwise access is disabled. To enable
+the interface go to:
+
+Overview => Data Import and Export => Integrations With Other Systems
+
+Scroll down to "Enable General REST Interface" to define a shared
+passphrase and enable the interface. The passphrase must have at least
+8 characters. This passphrase then goes into `.secret` as its only content.
+
+Below the field you can also find the URL of the REST interface. It
+looks like the following:
+[https://www.conftool.net/my_conference/rest.php](https://www.conftool.net/my_conference/rest.php).
+Copy this URL into the `.url` file.
+
+### `BoA_DSP_generator.py`
+
+This is the actual generator script that can be run once the CSV files
+have been fetched. It does three things:
 
 + prepare the `BookOfAbstracts.tex` in the `Book_of_abstracts` folder,
   and its includes for all sessions in the `Contributions` subfolder.
@@ -50,13 +69,19 @@ run once the CSV files have been fetched. It does three things:
   with the room schedule of the week in the
   `Daily_Scientific_Program/rooms` folder.
 
-`html2latex.py` a simple module the a single function `html2latex` cleaning
+### `html2latex.py`
+
+This a simple module containing the single function `html2latex` for cleaning
 out a selection of HTML tags. It can be extended by additional tags as
 required. There are also a PyPI and some GitHub projects by the same
 name that we decided to avoid here as they have been unattended or
-even archived. The function `check_html_tags.py` is not strictly
-necessary for the generation of the above TeX files, but it checks if all
-HTML tags used in the CSV files are covered by `html2latex.py`.
+even archived.
+
+### `check_html_tags.py`
+
+The script `check_html_tags.py` is not necessary for the generation of
+the above TeX files, but it checks if all HTML tags used in the CSV
+files are covered by `html2latex.py`.
 
 ## Book of abstracts
 
@@ -112,10 +137,11 @@ with the `pandas`, `requests` and `datetime` modules installed. We
 recommend to use a virtual environment for that. Also make sure to
 have a recent LaTeX installation (ideally also providing `latexmk`).
 
-1. Go to the main folder, where you also find this README.md and
-   execute `get_conftool_data.py`. Depending on your network connection,
-   as well as the number of submissions and participants, this may
-   take a short while.
+1. Go to the main folder, where you also find this README.md create
+   `.url` and `.secret` in this folder according to the instructions
+   above, and execute `get_conftool_data.py`. Depending on your
+   network connection, as well as the number of submissions and
+   participants, this may take a short while.
 
 2. Once that has finished you can switch to the `LaTeX` folder. Update
   `this-gam.sty` according to your needs, here.
