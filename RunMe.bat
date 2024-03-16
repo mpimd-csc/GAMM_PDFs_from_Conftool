@@ -20,7 +20,7 @@ goto :eof
     if %errorlevel% neq 0 exit /b 3
     latexmk -pdf BookOfAbstracts.tex
     if %errorlevel% neq 0 exit /b 4
-    copy "BookOfAbstracts.pdf" "%CWD%"
+    copy BookOfAbstracts.pdf "%CWD%"
     cd "%CWD%"
     if %errorlevel% neq 0 exit /b 255
 goto :eof
@@ -30,7 +30,7 @@ goto :eof
     if %errorlevel% neq 0 exit /b 5
     latexmk -pdf Daily_Scientific_Program.tex
     if %errorlevel% neq 0 exit /b 6
-    copy "Daily_Scientific_Program.pdf" "%CWD%"
+    copy Daily_Scientific_Program.pdf "%CWD%"
     cd "%CWD%"
     if %errorlevel% neq 0 exit /b 255
 goto :eof
@@ -41,7 +41,7 @@ goto :eof
     for %%f in (*.tex) do (
         latexmk -pdf "%%f"
     )
-    copy "*.pdf" "%CWD%"
+    copy *.pdf "%CWD%"
     cd "%CWD%"
     if %errorlevel% neq 0 exit /b 255
 goto :eof

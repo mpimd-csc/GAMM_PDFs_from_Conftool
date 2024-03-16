@@ -3,21 +3,21 @@
 make_boa () {
     cd LaTeX/Book_of_abstracts || exit 3
     latexmk -pdf BookOfAbstracts.tex || exit 4
-	cp "BookOfAbstracts.pdf" "$CWD"
+	cp ./BookOfAbstracts.pdf "$CWD"
     cd "$CWD" || exit 255
 }
 
 make_dsp () {
     cd LaTeX/Daily_Scientific_Program || exit 5
     latexmk -pdf Daily_Scientific_Program.tex || exit 6
-	cp "Daily_Scientific_Program.pdf" "$CWD"
+	cp ./Daily_Scientific_Program.pdf "$CWD"
     cd "$CWD" || exit 255
 }
 
 make_room_plans () {
     cd LaTeX/Daily_Scientific_Program/rooms || exit 7
     find . -maxdepth 1 -name "*.tex" -exec latexmk -pdf {} \;
-	cp "*.pdf" "$CWD"
+	cp ./*.pdf "$CWD"
     cd "$CWD" || exit 255
 }
 
