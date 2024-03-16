@@ -163,3 +163,7 @@ have a recent LaTeX installation (ideally also providing `latexmk`).
 
 5. Finally, change to the `rooms` folder and also compile all TeX
    files there.
+
+The same can be achieved using the `RunMe.sh` on Linux, and `RunMe.bat`
+on Windows, once both `.url` and `.secret` have been created.
+These also feature command-line options to build only selected PDFs.
