@@ -53,8 +53,9 @@ passphrase and enable the interface. The passphrase must have at least
 
 Below the field you can also find the URL of the REST interface. It
 looks like the following:
-[https://www.conftool.net/my_conference/rest.php](https://www.conftool.net/my_conference/rest.php).
-Copy this URL into the `.url` file.
+[https://www.conftool.org/gammYYYY/rest.php](https://www.conftool.net/gammYYYY/rest.php).
+Where YYYY stands for the year of your GAMM instance. Copy this URL
+into the `.url` file.
 
 ### `BoA_DSP_generator.py`
 
