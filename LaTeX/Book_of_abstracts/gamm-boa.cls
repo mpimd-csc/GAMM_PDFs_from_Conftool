@@ -3,7 +3,7 @@
 % Written by Jens Saak, March 2024                                             %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{gamm-dsp}[2024/03/18 GAMM book of abstracts class]
+\ProvidesClass{gamm-boa}[2024/03/18 GAMM book of abstracts class]
 
 % pick report as th base class
 \LoadClass[11pt, oneside]{report}
