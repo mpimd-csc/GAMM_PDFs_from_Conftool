@@ -38,12 +38,17 @@ def main():
     parser.add_argument('-d', '-s', '--dsp', action='store_true', help='Generate daily scientific program')
     parser.add_argument('-r', '--rooms', action='store_true', help='Generate room plans')
     parser.add_argument('-a', '--all', action='store_true', help='Generate all PDFs')
+    parser.add_argument('-m', '--withMises', action='store_true', help='Generate all PDFs')
     args = parser.parse_args()
 
     # Fetch data from ConfTool Pro
     subprocess.check_call([sys.executable, "get_conftool_data.py"])
+
     # Create LaTeX files
-    subprocess.check_call([sys.executable, "BoA_DSP_generator.py"])
+    if args.withMises:
+        subprocess.check_call([sys.executable, "BoA_DSP_generator.py", "--withMises"])
+    else:
+        subprocess.check_call([sys.executable, "BoA_DSP_generator.py"])
 
     if args.boa:
         make_boa()
