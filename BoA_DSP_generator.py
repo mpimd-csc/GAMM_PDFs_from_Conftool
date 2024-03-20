@@ -2,6 +2,7 @@
 import datetime as dt
 import pandas as pd
 import re
+import argparse
 
 from html2latex import html2latex
 
@@ -41,6 +42,7 @@ def janitor(instr):
     instr = instr.replace(u'\u2212', '-')
     instr = instr.replace(u'\u0308', '\\"')
     instr = instr.replace(u'\u0301', '\\\'')
+    instr = instr.replace(u'\u001B', '')
     instr = instr.replace('^2','\\textsuperscript{2}')
     instr = instr.replace('^m','\\textsuperscript{m}')
     instr = instr.replace('\percent', '\%')# we replaced % by \percent in html2latex
@@ -216,6 +218,27 @@ def write_PL(df, outdir):
         inputs += f'\\input{{{fname}}}\n'
     return inputs
 
+def write_RvML(df, outdir):
+    file = open(outdir+'/RvML.tex', 'w', encoding='utf-8')
+    for index, row in df.iterrows():
+        date = dt.datetime.fromisoformat(row['session_start'].replace(' ','T')).strftime("%B %d, %Y")
+        room = row['session_room']
+        ostring = ''
+        for j in range(1,3):
+            RvML = get_contribution_info(row,j)
+            if not pd.isna(row[f'p{j}_presenting_author']):
+                ostring += f'\\Mises{{{RvML["title"]}}}%\n'
+                ostring +=  '       {Richard von Mises Lecture}%\n'
+                ostring += f'       {{{RvML["presenter"]}}}%\n'
+                ostring += f'       {{{date}}}%\n'
+                ostring += f'       {{{RvML["start"]}}}%\n'
+                ostring += f'       {{{RvML["end"]}}}%\n'
+                ostring += f'       {{{room}}}{{}}%\n'
+        ostring = janitor(ostring)
+        file.write(ostring)
+        file.close()
+    return '\\input{RvML.tex}\n'
+
 def write_section(org, sec, df, outdir, toc_sessions_silent=False):
     fname = sec.replace(' ', '_')
     fullname = outdir+'/'+fname+'.tex'
@@ -293,10 +316,12 @@ def write_dfg(organizers, df, outdir):
 ################################################################################
 # routine for writing the tables in the daily session program                 #
 ################################################################################
-def make_session_table(SAT, start, n):
+def make_session_table(SAT, start, n, withMises=False):
     match n:
         case 1:
             inputs = '\\begin{longtable}{PA|}\n'
+        case 2:
+            inputs = '\\begin{longtable}{PmM|}\n'
         case 3:
             inputs = '\\begin{longtable}{Pxyx|}\n'
         case 6:
@@ -334,9 +359,9 @@ def make_session_table(SAT, start, n):
                             inputs += '\n&'
                 else:
                     match contribution["duration"]:
-                        case 60:
+                        case 60: # PLenary lectures (incl Prandtl)
                             inputs += f'\n&\\footnotesize{{\\bfseries {contribution["title"]}}}\\newline\presenter{{{contribution["presenter"]}}}'
-                        case 40:
+                        case 40: # Topcial Speakers
                             skip = True # found a topical speaker double slot and skip next
                             match n:
                                 case 3:
@@ -344,18 +369,25 @@ def make_session_table(SAT, start, n):
                                 case 6:
                                     inputs += '\n&\multicolumn{2}{T}'
                             inputs += f'{{\\footnotesize{{\\bfseries {contribution["title"]}}}\\newline\presenter{{{contribution["presenter"]}}}}}'
-                        case 30:
-                            match i:
-                                case 0:
-                                    drop_extra_empty = True
-                                    inputs += '\n&\multicolumn{6}{A}{\\noindent\\begin{tabularx}{\linewidth}{@{}BCBC@{}}'
-                                    inputs += f'\\footnotesize{{\\bfseries {contribution["title"]}}}\\newline\presenter{{{contribution["presenter"]}}}'
-                                case 3:
+                        case 30: # either von Mises Lecture session with 2 talks or Minisymposium with 4 talks
+                            if sname == 'RvML':
+                                print(withMises)
+                                if withMises:
                                     inputs += f'\n&\\footnotesize{{\\bfseries {contribution["title"]}}}\\newline\presenter{{{contribution["presenter"]}}}'
-                                    inputs += '\end{tabularx}}'
-                                case _:
-                                    inputs += f'\n&\\footnotesize{{\\bfseries {contribution["title"]}}}\\newline\presenter{{{contribution["presenter"]}}}'
-                        case 20:
+                                else:
+                                   inputs += '\n&\\footnotesize{\\bfseries Price winner(s) and title(s) will be announced in the Opening}'
+                            else:
+                                match i:
+                                    case 0:
+                                        drop_extra_empty = True
+                                        inputs += '\n&\multicolumn{6}{A}{\\noindent\\begin{tabularx}{\linewidth}{@{}BCBC@{}}'
+                                        inputs += f'\\footnotesize{{\\bfseries {contribution["title"]}}}\\newline\presenter{{{contribution["presenter"]}}}'
+                                    case 3:
+                                        inputs += f'\n&\\footnotesize{{\\bfseries {contribution["title"]}}}\\newline\presenter{{{contribution["presenter"]}}}'
+                                        inputs += '\end{tabularx}}'
+                                    case _:
+                                        inputs += f'\n&\\footnotesize{{\\bfseries {contribution["title"]}}}\\newline\presenter{{{contribution["presenter"]}}}'
+                        case 20: # the default 20 minutes section talks
                             shift = get_duration(advance_slot(start,i).isoformat(), contribution["start"])
                             if shift > 0: # there is a gap in the schedule
                                 inputs += '\n&' # add empty cell
@@ -370,7 +402,7 @@ def make_session_table(SAT, start, n):
     inputs += '\end{longtable}\n'
     return janitor(inputs)
 
-def make_room_session_table(row, template, room, day):
+def make_room_session_table(row, template, room, day, withMises=False):
     start = dt.datetime.fromisoformat(row['session_start'].replace(' ','T'))
     end = dt.datetime.fromisoformat(row['session_end'].replace(' ','T'))
     stime = start.strftime("%H:%M")
@@ -382,12 +414,18 @@ def make_room_session_table(row, template, room, day):
     for i in range(1,7):
         contribution = get_contribution_info(row, i)
         if contribution is not None:
-            if contribution["duration"] == 0: # set explicitly for posters
-                cstart = start.strftime("%H:%M")
+            if (not withMises) and (session == 'RvML'):
+                if i == 1:
+                    cstart = start.strftime("%H:%M")
+                    inputs += f'{cstart}&\n'
+                    inputs += '\\textbf{Price winner(s) and title(s) will be announced in the Opening}\\\\\hline\n'
             else:
-                cstart = dt.datetime.fromisoformat(contribution["start"].replace(' ','T')).strftime("%H:%M")
-            inputs += f'{cstart}&\n'
-            inputs += f'\\textbf{{{contribution["title"]}}}\\newline\\textit{{{contribution["presenter"]}}}\\\\\hline\n'
+                if contribution["duration"] == 0: # set explicitly for posters
+                    cstart = start.strftime("%H:%M")
+                else:
+                    cstart = dt.datetime.fromisoformat(contribution["start"].replace(' ','T')).strftime("%H:%M")
+                inputs += f'{cstart}&\n'
+                inputs += f'\\textbf{{{contribution["title"]}}}\\newline\\textit{{{contribution["presenter"]}}}\\\\\hline\n'
         else:
             if (session == 'RvML') and (i == 1):
                 cstart = start.strftime("%H:%M")
@@ -395,13 +433,13 @@ def make_room_session_table(row, template, room, day):
                 inputs += '\\textbf{Price winner(s) and title(s) will be announced in the Opening}\\\\\hline\n'
 
     inputs += '\end{tabularx}\n\end{samepage}\n'
-    
+
     return janitor(inputs)
 ################################################################################
 # top-level routines for generating the book of abstracts and daily session    #
 # program                                                                      #
 ################################################################################
-def make_boa(df):
+def make_boa(df, withMises=False):
     # Filter by the categories desired as chapter in the BoA
     DFG              = df[df['session_short'].str.startswith('DFG')].sort_values(by='session_short')
     Prandtl          = df[df['session_short'].str.startswith('PML')].sort_values(by='session_short')
@@ -422,6 +460,10 @@ def make_boa(df):
     inputs  = '\chapter{Prandtl Memorial Lecture and Plenary~Lectures}\n'
     inputs += write_PML(Prandtl, outdir)
     inputs += write_PL(Plenaries, outdir)
+    if withMises:
+        vonMises = df[df['session_short'].str.startswith('RvML')].sort_values(by='session_short')
+        inputs  += '\chapter{Richard von Mises Price Lecture(s)}\n'
+        inputs  += write_RvML(vonMises, outdir)
     inputs += '\chapter{Minisymposia and Young~Researchers~Minisymposia}\n'
     inputs += write_minis(Organizers, Minisymposia, YoungResearchers, outdir)
     inputs += '\chapter{DFG Programs}\n'
@@ -442,7 +484,7 @@ CONTENTS
     boa.write(contents)
     boa.close()
 
-def make_dsp(df):
+def make_dsp(df, withMises=False):
     df = df.sort_values(by='session_start')
     session_starts = df['session_start'].unique()
 
@@ -459,14 +501,17 @@ def make_dsp(df):
         #inputs += f'\\section*{{{start.strftime("%H:%M")}}}\n'
         SAT = df[df['session_start'] == session].sort_values(by='session_short') # session at time
         length = get_duration(session, SAT['session_end'].values[0])
-        if len(SAT) == 1: # only one parallel session, i.e. Plenary or Poster
-            if SAT['session_short'].values[0].startswith('PL') | SAT['session_short'].values[0].startswith('PML') | SAT['session_short'].values[0].startswith('RvML'):
-                inputs += make_session_table(SAT, start, int(1))
-            if SAT['session_short'].values[0].startswith('Poster'):
-                inputs += make_session_table(SAT, start, int(16)) # TODO 16 seems to be the maximum for this conference. This may need fixing
-        else:
-            num_slots = length / 20
-            inputs += make_session_table(SAT, start, int(num_slots))
+        match len(SAT):
+            case 1: # only one parallel session, i.e. Plenary or Poster
+                if SAT['session_short'].values[0].startswith('PL') | SAT['session_short'].values[0].startswith('PML') | SAT['session_short'].values[0].startswith('RvML'):
+                    inputs += make_session_table(SAT, start, int(1))
+                if SAT['session_short'].values[0].startswith('Poster'):
+                    inputs += make_session_table(SAT, start, int(16)) # TODO 16 seems to be the maximum for this conference. This may need fixing
+                if SAT['session_short'].values[0].startswith('RvML'):
+                    inputs += make_session_table(SAT, start, 2, withMises=withMises)
+            case _:
+                num_slots = length / 20
+                inputs += make_session_table(SAT, start, int(num_slots))
     contents = '''\documentclass[colorlinks]{gamm-dsp}
 
 \\begin{document}
@@ -481,7 +526,7 @@ CONTENTS
     dsp.write(contents)
     dsp.close()
 
-def make_room_plans(df):
+def make_room_plans(df, withMises=False):
     outdir = './LaTeX/Daily_Scientific_Program/rooms/'
     df = df.sort_values(by='session_room')
 
@@ -502,7 +547,7 @@ def make_room_plans(df):
             if old_day != day:
                 old_day = day
                 inputs += '\n\pagebreak[4]'
-            inputs += make_room_session_table(row, template, room, day)
+            inputs += make_room_session_table(row, template, room, day, withMises=withMises)
         contents = template.replace('ROOM', room)
         contents = contents.replace('CONTENTS', inputs)
         room_file.write(contents)
@@ -512,6 +557,17 @@ def make_room_plans(df):
 # Main function                                                                #
 ################################################################################
 def main():
+    parser = argparse.ArgumentParser(description='Generate PDFs for conference materials.')
+    parser.add_argument('-m', '--withMises', action='store_true', help='onclude von Mises lecturer(s) and title(s)')
+    args = parser.parse_args()
+
+    if args.withMises:
+        withMises = True
+    else:
+        withMises = False
+
+    print(f'Include von Mises Prize lectures: {withMises}\n\n')
+
     # Read the Sessions exported from ConfTool
     df = pd.read_csv('CSV/sessions.csv', sep=';', quotechar='"')
 
@@ -519,9 +575,9 @@ def main():
     # TODO: preselect the relevant columns to read (see Organizers in make_boa)
     #df.dropna(axis='columns', how='all', inplace=True)
 
-    make_boa(df)
-    make_dsp(df)
-    make_room_plans(df)
+    make_boa(df, withMises=withMises)
+    make_dsp(df, withMises=withMises)
+    make_room_plans(df, withMises=withMises)
 
 if __name__ == "__main__":
     main()
