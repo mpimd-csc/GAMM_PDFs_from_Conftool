@@ -96,7 +96,7 @@
 }%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Plenary Event section macros with 6 arguments                                %
+% Plenary Event section macros with 9 arguments                                %
 %                                                                              %
 % 1. title                                                                     %
 % 2. session                                                                   %
@@ -144,6 +144,21 @@
   \par\nopagebreak%
   {\sloppy #9}%
   \vspace*{\stretch{1}}%
+  \par%
+}%
+
+\newcommand{\Mises}[8]{%
+  \colorbox{primary}{%
+    \color{white}%
+    \begin{tabularx}{\tablewidth}{@{}p{\widthof{Laudation:}}X@{}}
+      \multicolumn{2}{@{}p{\tablewidth}@{}}{%
+      \Headline{section}{#2:~#1~(#3)}{#2:~#1}}\\
+      Speaker:    & {\bfseries #3}\\
+      Date:       & #4\hfill #5--#6\\
+      Room:       & #7
+      \ifthenelse{\equal{#8}{}}{}{\\Laudation: & \small #8}
+    \end{tabularx}%
+  }%
   \par%
 }%
 

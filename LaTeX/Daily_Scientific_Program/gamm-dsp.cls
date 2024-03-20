@@ -85,7 +85,9 @@
 \newcolumntype{x}{>{\RaggedRight}p{7.4cm}}
 \newcolumntype{t}{>{\RaggedRight\cellcolor{secondary!20}}p{15.22cm}}
 \newcolumntype{y}{>{\RaggedRight\leavevmode\color{white}\columncolor{tertiary}}x}
-\newcolumntype{P}{>{\columncolor{primary}}m{2cm}}
+\newcolumntype{P}{>{\columncolor{primary}}p{2cm}}
+\newcolumntype{m}{>{\RaggedRight}p{11.335cm}}
+\newcolumntype{M}{>{\RaggedRight\leavevmode\color{white}\columncolor{tertiary}}m}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Title page and maketitle                                                     %
