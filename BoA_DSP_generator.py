@@ -577,10 +577,6 @@ def main():
     # Read the Sessions exported from ConfTool
     df = pd.read_csv('CSV/sessions.csv', sep=';', quotechar='"')
 
-    # get rid of empty columns
-    # TODO: preselect the relevant columns to read (see Organizers in make_boa)
-    #df.dropna(axis='columns', how='all', inplace=True)
-
     print('\nGenerating book of abstracts LaTeX files\n')
     make_boa(df, withMises=withMises)
     print('\nGenerating Session Table LaTeX files\n')
