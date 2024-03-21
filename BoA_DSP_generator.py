@@ -118,7 +118,7 @@ def get_session_info(row):
     }
     return session
 
-def get_contribution_info(row, idx):
+def get_contribution_info(row, idx, RvML=False):
     ptitle     = f'p{idx}_title'
     pauthors   = f'p{idx}_authors'
     porgas     = f'p{idx}_organisations'
@@ -140,12 +140,19 @@ def get_contribution_info(row, idx):
         abstract = ''
     else:
         abstract = html2latex(row[pabstract])
+    if RvML:
+        start = dt.datetime.fromisoformat(row[pstart].replace(' ', 'T')).strftime('%H:%M')
+        end   = dt.datetime.fromisoformat(row[pend].replace(' ', 'T')).strftime('%H:%M')
+    else:
+        start = row[pstart]
+        end   = row[pend]
+    
     contribution = {
         "title"         : row[ptitle],
         "authors"       : authors,
         "presenter"     : presenter,
-        "start"         : row[pstart],
-        "end"           : row[pend],
+        "start"         : start,
+        "end"           : end,
         "duration"      : duration,
         "abstract"      : abstract,
         "organizations" : row[porgas]
@@ -225,11 +232,11 @@ def write_RvML(df, outdir):
         room = row['session_room']
         ostring = ''
         for j in range(1,3):
-            RvML = get_contribution_info(row,j)
+            RvML = get_contribution_info(row,j, RvML=True)
             if not pd.isna(row[f'p{j}_presenting_author']):
                 ostring += f'\\Mises{{{RvML["title"]}}}%\n'
                 ostring +=  '       {Richard von Mises Lecture}%\n'
-                ostring += f'       {{{RvML["presenter"]}}}%\n'
+                ostring += f'       {{\\presenter{{{RvML["presenter"]}}}~{{\\em({RvML["organizations"]})}}}}%\n'
                 ostring += f'       {{{date}}}%\n'
                 ostring += f'       {{{RvML["start"]}}}%\n'
                 ostring += f'       {{{RvML["end"]}}}%\n'
