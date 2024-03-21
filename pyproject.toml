@@ -14,10 +14,10 @@ authors = [
 ]
 
 maintainers = [
-  {name = "Jens Saal", email = "saak@mpi-magdeburg.mpg.de"}
+  {name = "GAMM e.V.", email = "gamm@mailbox.tu-dresden.de"}
 ]
 
-description = "Book of Abstract generator for GAMM annual meetings based on ConfTool data exports."
+description = "PDF generator for GAMM annual meetings based on ConfTool Pro data exports. Allows to create, book of abstracts, daily scientific programm and individual room plans."
 
 readme = "README.md"
 
