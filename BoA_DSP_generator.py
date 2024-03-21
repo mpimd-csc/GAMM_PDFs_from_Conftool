@@ -54,8 +54,6 @@ def janitor(instr):
 # and advance time by 20 minutes                                               #
 ################################################################################
 def get_duration(start, end):
-    start = start.replace(' ', 'T')
-    end = end.replace(' ', 'T')
     dt1 = dt.datetime.fromisoformat(start)
     dt2 = dt.datetime.fromisoformat(end)
     return (dt2-dt1).total_seconds() / 60
@@ -90,8 +88,8 @@ def get_section_info(df, section):
     return title, organizers
 
 def get_session_info(row):
-    start = dt.datetime.fromisoformat(row['session_start'].replace(' ','T'))
-    end   = dt.datetime.fromisoformat(row['session_end'].replace(' ','T'))
+    start = dt.datetime.fromisoformat(row['session_start'])
+    end   = dt.datetime.fromisoformat(row['session_end'])
     c1 = row['chair1']
     c2 = row['chair2']
     c3 = row['chair3']
@@ -141,8 +139,8 @@ def get_contribution_info(row, idx, RvML=False):
     else:
         abstract = html2latex(row[pabstract])
     if RvML:
-        start = dt.datetime.fromisoformat(row[pstart].replace(' ', 'T')).strftime('%H:%M')
-        end   = dt.datetime.fromisoformat(row[pend].replace(' ', 'T')).strftime('%H:%M')
+        start = dt.datetime.fromisoformat(row[pstart]).strftime('%H:%M')
+        end   = dt.datetime.fromisoformat(row[pend]).strftime('%H:%M')
     else:
         start = row[pstart]
         end   = row[pend]
@@ -160,8 +158,8 @@ def get_contribution_info(row, idx, RvML=False):
     return contribution
 
 def get_plenary_info(row):
-    start = dt.datetime.fromisoformat(row['session_start'].replace(' ','T'))
-    end   = dt.datetime.fromisoformat(row['session_end'].replace(' ','T'))
+    start = dt.datetime.fromisoformat(row['session_start'])
+    end   = dt.datetime.fromisoformat(row['session_end'])
     if pd.isna(row['chair1']):
         chair = '\color{red} NOT AVAILABLE'
     else:
@@ -228,7 +226,7 @@ def write_PL(df, outdir):
 def write_RvML(df, outdir):
     file = open(outdir+'/RvML.tex', 'w', encoding='utf-8')
     for index, row in df.iterrows():
-        date = dt.datetime.fromisoformat(row['session_start'].replace(' ','T')).strftime("%B %d, %Y")
+        date = dt.datetime.fromisoformat(row['session_start']).strftime("%B %d, %Y")
         room = row['session_room']
         ostring = ''
         for j in range(1,3):
@@ -409,8 +407,8 @@ def make_session_table(SAT, start, n, withMises=False):
     return janitor(inputs)
 
 def make_room_session_table(row, template, room, day, withMises=False):
-    start = dt.datetime.fromisoformat(row['session_start'].replace(' ','T'))
-    end = dt.datetime.fromisoformat(row['session_end'].replace(' ','T'))
+    start = dt.datetime.fromisoformat(row['session_start'])
+    end = dt.datetime.fromisoformat(row['session_end'])
     stime = start.strftime("%H:%M")
     etime = end.strftime("%H:%M")
     inputs  = f'\n\\begin{{samepage}}\n\\section*{{{day}\hfill{stime}--{etime}}}\n'
@@ -429,7 +427,7 @@ def make_room_session_table(row, template, room, day, withMises=False):
                 if contribution["duration"] == 0: # set explicitly for posters
                     cstart = start.strftime("%H:%M")
                 else:
-                    cstart = dt.datetime.fromisoformat(contribution["start"].replace(' ','T')).strftime("%H:%M")
+                    cstart = dt.datetime.fromisoformat(contribution["start"]).strftime("%H:%M")
                 inputs += f'{cstart}&\n'
                 inputs += f'\\textbf{{{contribution["title"]}}}\\newline\\textit{{{contribution["presenter"]}}}\\\\\hline\n'
         else:
@@ -499,7 +497,7 @@ def make_dsp(df, withMises=False):
     inputs = ''
     old_day = ''
     for session in session_starts:
-        start = dt.datetime.fromisoformat(session.replace(' ', 'T'))
+        start = dt.datetime.fromisoformat(session)
         day = start.strftime("%A, %B %d")
         if old_day != day:
             old_day = day
