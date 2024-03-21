@@ -135,7 +135,7 @@ This is tedious and time-consuming, so best start early with this.
 
 For the actual processing , make sure you have at least Python 3.10,
 with the `pandas`, `requests` and `datetime` modules installed. We
-recommend to use a virtual environment for that. Also make sure to
+recommend using a virtual environment for that. Also make sure to
 have a recent LaTeX installation (ideally also providing `latexmk`).
 
 1. Go to the main folder, where you also find this README.md create
@@ -168,3 +168,34 @@ have a recent LaTeX installation (ideally also providing `latexmk`).
 The same can be achieved using the `RunMe.sh` on Linux, and `RunMe.bat`
 on Windows, once both `.url` and `.secret` have been created.
 These also feature command-line options to build only selected PDFs.
+
+## `RunMe.py`
+
+RunMe.py is the main driver for the PDF build processes. 
+It can be influenced by the following options:
+
+-h, -?, --help  print thid documentation to screeen and exit.
+-b, --boa       compile only the book of abstracts PDF
+-d, --dsp       compile only the daily scientific programm PDF
+-r, --rooms     compile only the room plans PDF
+
+-a, --all       compile all PDFs (this is equivalent to no option at all)
+
+-m, --withMises include the von Mises Lecturer(s)
+                This should only be used after they have been officially 
+                announced. Also, this option needs to be used together
+                with one of the above options
+
+Usage examples:
+
+to simply build all PDFs before the Mises Lecturers have been announced, 
+and their details added to the ConfTool, simply run
+ 
+    RunMe.py
+
+Whereas after the announcements, if you want to quickly update the room 
+plans the following are equivalent:
+
+    RunMe.py --rooms -withMises
+    RunMe.py -r -m
+    RunMe.py -rm
