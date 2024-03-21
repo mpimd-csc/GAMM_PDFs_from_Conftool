@@ -378,7 +378,6 @@ def make_session_table(SAT, start, n, withMises=False):
                             inputs += f'{{\\footnotesize{{\\bfseries {contribution["title"]}}}\\newline\presenter{{{contribution["presenter"]}}}}}'
                         case 30: # either von Mises Lecture session with 2 talks or Minisymposium with 4 talks
                             if sname == 'RvML':
-                                print(withMises)
                                 if withMises:
                                     inputs += f'\n&\\footnotesize{{\\bfseries {contribution["title"]}}}\\newline\presenter{{{contribution["presenter"]}}}'
                                 else:
@@ -573,7 +572,7 @@ def main():
     else:
         withMises = False
 
-    print(f'Include von Mises Prize lectures: {withMises}\n\n')
+    print(f'\nInclude von Mises Prize lectures: {withMises}\n\n')
 
     # Read the Sessions exported from ConfTool
     df = pd.read_csv('CSV/sessions.csv', sep=';', quotechar='"')
@@ -582,8 +581,11 @@ def main():
     # TODO: preselect the relevant columns to read (see Organizers in make_boa)
     #df.dropna(axis='columns', how='all', inplace=True)
 
+    print('\nGenerating book of abstracts LaTeX files\n')
     make_boa(df, withMises=withMises)
+    print('\nGenerating Session Table LaTeX files\n')
     make_dsp(df, withMises=withMises)
+    print('\nGenerating Room Plan LaTeX files\n')
     make_room_plans(df, withMises=withMises)
 
 if __name__ == "__main__":
