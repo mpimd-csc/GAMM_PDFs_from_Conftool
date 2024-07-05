@@ -79,7 +79,7 @@ def get_section_info(df, section):
     organizers = ''
     title = '\\color{red}{NOT AVAILABLE}'
     first = True
-    for index, row in sect_organ.iterrows():
+    for _, row in sect_organ.iterrows():
         if not first:
             organizers += '\\newline '
         organizers += f'{row["name"]}, {row["firstname"]} {{\\em ({row["organisation"]})}}'
@@ -186,7 +186,7 @@ def get_plenary_info(row):
 ################################################################################
 def write_PML(df, outdir):
     file = open(outdir+'/PML.tex', 'w', encoding='utf-8')
-    for index, row in df.iterrows():
+    for _, row in df.iterrows():
         PML = get_plenary_info(row)
         ostring  = f'\\Prandtl{{{PML["title"]}}}%\n'
         ostring += f'        {{{PML["session"]}}}%\n'
@@ -204,7 +204,7 @@ def write_PML(df, outdir):
 
 def write_PL(df, outdir):
     inputs = ''
-    for index, row in df.iterrows():
+    for _, row in df.iterrows():
         PL = get_plenary_info(row)
         fname = f'{PL["session"]}.tex'
         file = open(outdir+'/'+fname, 'w', encoding='utf-8')
@@ -225,7 +225,7 @@ def write_PL(df, outdir):
 
 def write_RvML(df, outdir):
     file = open(outdir+'/RvML.tex', 'w', encoding='utf-8')
-    for index, row in df.iterrows():
+    for _, row in df.iterrows():
         date = dt.datetime.fromisoformat(row['session_start']).strftime("%B %d, %Y")
         room = row['session_room']
         ostring = ''
@@ -253,7 +253,7 @@ def write_section(org, sec, df, outdir, toc_sessions_silent=False):
     ostring += f'        {{{organizers}}}\n\n'
 
     sessions = df[df['session_short'].str.startswith(sec)]
-    for index, row in sessions.iterrows():
+    for _, row in sessions.iterrows():
         S = get_session_info(row)
         if toc_sessions_silent:
             ostring += '\SSession'
@@ -312,7 +312,7 @@ def write_minis(organizers, MS, YRM, outdir):
 
 def write_dfg(organizers, df, outdir):
     inputs = ''
-    for index, row in df.iterrows():
+    for _, row in df.iterrows():
         fname = write_section(organizers, row['session_short'], df, outdir,
                               toc_sessions_silent=True)
         inputs += f'\\input{{{fname}}}\n'
@@ -346,7 +346,7 @@ def make_session_table(SAT, start, n, withMises=False):
         inputs += f'&\\white{{{slot_start}}}'
     inputs += '\\\\\n\endhead\n'
     skip = False
-    for index, row in SAT.iterrows():
+    for _, row in SAT.iterrows():
         sname = row['session_short']
         sroom = row['session_room']
         inputs += f'\\white{{{sname}}}\\newline\\white{{\small ({sroom})}}'
@@ -546,7 +546,7 @@ def make_room_plans(df, withMises=False):
         room_file = open(f'{outdir}{room}.tex', 'w', encoding = 'utf-8')
         old_day = ''
         inputs = ''
-        for index, row in sessions.iterrows():
+        for _, row in sessions.iterrows():
             day = dt.datetime.fromisoformat(row['session_start'].replace(' ','T')).strftime("%A, %B %d")
             if old_day != day:
                 old_day = day
