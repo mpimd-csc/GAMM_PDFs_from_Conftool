@@ -406,7 +406,7 @@ def make_session_table(SAT, start, n, withMises=False):
     inputs += '\end{longtable}\n'
     return janitor(inputs)
 
-def make_room_session_table(row, template, room, day, withMises=False):
+def make_room_session_table(row, day, withMises=False):
     start = dt.datetime.fromisoformat(row['session_start'])
     end = dt.datetime.fromisoformat(row['session_end'])
     stime = start.strftime("%H:%M")
@@ -551,7 +551,7 @@ def make_room_plans(df, withMises=False):
             if old_day != day:
                 old_day = day
                 inputs += '\n\pagebreak[4]'
-            inputs += make_room_session_table(row, template, room, day, withMises=withMises)
+            inputs += make_room_session_table(row, day, withMises=withMises)
         contents = template.replace('ROOM', room)
         contents = contents.replace('CONTENTS', inputs)
         room_file.write(contents)
