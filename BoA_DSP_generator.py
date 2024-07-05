@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-# This file is part of the BOA_FROM_CONFTOOL project.
-# Copyright BOA_FROM_CONFTOOL developers and contributors. All rights reserved.
+# This file is part of the GAMM_PDFs_FROM_CONFTOOL project.
+# Copyright GAMM_PDFs_FROM_CONFTOOL developers and contributors. All rights reserved.
 # License: BSD 2-Clause License (https://opensource.org/licenses/BSD-2-Clause)
 
 import datetime as dt
