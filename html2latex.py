@@ -1,3 +1,8 @@
+#!/usr/bin/env python3
+# This file is part of the BOA_FROM_CONFTOOL project.
+# Copyright BOA_FROM_CONFTOOL developers and contributors. All rights reserved.
+# License: BSD 2-Clause License (https://opensource.org/licenses/BSD-2-Clause)
+
 import re
 def html2latex(instr):
     instr = instr.replace('<br />', '\\newline ')

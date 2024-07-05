@@ -1,4 +1,8 @@
 #!/usr/bin/env python3
+# This file is part of the BOA_FROM_CONFTOOL project.
+# Copyright BOA_FROM_CONFTOOL developers and contributors. All rights reserved.
+# License: BSD 2-Clause License (https://opensource.org/licenses/BSD-2-Clause)
+
 import pandas as pd
 import re
 from html2latex import html2latex 
@@ -10,7 +14,7 @@ def print_tags(instr):
     # Use a set to collect unique tags
     unique_tags = set()
 
-    tags = tag_regex.findall(all_abstracts)
+    tags = tag_regex.findall(instr)
     for tag in tags:
         unique_tags.add(tag)
 
