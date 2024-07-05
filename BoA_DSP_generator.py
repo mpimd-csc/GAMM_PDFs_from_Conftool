@@ -182,7 +182,7 @@ def get_plenary_info(row):
     return contribution
 
 ################################################################################
-# helers for writing the actual section files in LaTeX                         #
+# helpers for writing the actual section files in LaTeX                        #
 ################################################################################
 def write_PML(df, outdir):
     file = open(outdir+'/PML.tex', 'w', encoding='utf-8')
