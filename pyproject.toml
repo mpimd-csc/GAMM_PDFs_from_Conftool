@@ -4,7 +4,6 @@ version = "2024.0.0"
 dependencies = [
   "pandas",
   "requests",
-  "datetime",
 ]
 
 requires-python = ">=3.10"
