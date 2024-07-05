@@ -14,43 +14,48 @@ from html2latex import html2latex
 # cleaner routine that handles all characters giving plain pdflatex trouble    #
 ################################################################################
 def utf8_clean(instr):
-    instr = instr.replace(' &', ' \&')
-    instr = instr.replace('#', '\\#')
-    instr = instr.replace('Γ', '\\ensuremath\\Gamma ')
-    instr = instr.replace('Ω', '\\ensuremath\\Omega ')
-    instr = instr.replace('∑', '\\ensuremath\\Sigma ')
-    instr = instr.replace('∇', '\\ensuremath\\nabla ')
-    instr = instr.replace('Δ', '\\ensuremath\\Delta ')
-    instr = instr.replace('√', '\\ensuremath\\sqrt')
-    instr = instr.replace('⋆', '\\ensuremath\\ast ')
-    instr = instr.replace('λ', '\\ensuremath\\lambda ')
-    instr = instr.replace('φ', '\\ensuremath\\varphi ')
-    instr = instr.replace('ε', '\\ensuremath\\varepsilon ')
-    instr = instr.replace('ϕ', '\\ensuremath\\Phi ')
-    instr = instr.replace('∈', '\\ensuremath\\in ')
-    instr = instr.replace('ψ', '\\ensuremath\\psi ')
-    instr = instr.replace('ξ', '\\ensuremath\\xi ')
-    instr = instr.replace('π', '\\ensuremath\\pi ')
-    instr = instr.replace('μ', '\\ensuremath\\mu ')
-    instr = instr.replace('∞', '\\ensuremath\\infty ')
-    instr = instr.replace('β', '\\ensuremath\\beta ')
-    instr = instr.replace('ω', '\\ensuremath\\omega ')
-    instr = instr.replace('→', '\\ensuremath\\rightarrow ')
-    instr = instr.replace(u'\u03c3', '\\ensuremath\\sigma ')
-    instr = instr.replace('θ', '\\ensuremath\\Theta ')
-    instr = instr.replace('\R', '\\mathbb{R}')
-    instr = instr.replace('≤', '\\ensuremath\\leq')
-    instr = instr.replace(u'\u2003', '~')
-    instr = instr.replace(u'\u202F', '~')
-    instr = instr.replace(u'\u2248', '')
-    instr = instr.replace(u'\u2212', '-')
-    instr = instr.replace(u'\u0308', '\\"')
-    instr = instr.replace(u'\u0301', '\\\'')
-    instr = instr.replace(u'\u001B', '')
-    instr = instr.replace('^2','\\textsuperscript{2}')
-    instr = instr.replace('^m','\\textsuperscript{m}')
-    instr = instr.replace('\percent', '\%')# we replaced % by \percent in html2latex
-    instr = instr.replace('\&=', '&=')
+    utf8_to_latex = {
+    " &": " \&",
+    "#": "\\#",
+    "Γ": "\\ensuremath\\Gamma ",
+    "Ω": "\\ensuremath\\Omega ",
+    "∑": "\\ensuremath\\Sigma ",
+    "∇": "\\ensuremath\\nabla ",
+    "Δ": "\\ensuremath\\Delta ",
+    "√": "\\ensuremath\\sqrt",
+    "⋆": "\\ensuremath\\ast ",
+    "λ": "\\ensuremath\\lambda ",
+    "φ": "\\ensuremath\\varphi ",
+    "ε": "\\ensuremath\\varepsilon ",
+    "ϕ": "\\ensuremath\\Phi ",
+    "∈": "\\ensuremath\\in ",
+    "ψ": "\\ensuremath\\psi ",
+    "ξ": "\\ensuremath\\xi ",
+    "π": "\\ensuremath\\pi ",
+    "μ": "\\ensuremath\\mu ",
+    "∞": "\\ensuremath\\infty ",
+    "β": "\\ensuremath\\beta ",
+    "ω": "\\ensuremath\\omega ",
+    "→": "\\ensuremath\\rightarrow ",
+    "\u03c3": "\\ensuremath\\sigma ",
+    "θ": "\\ensuremath\\Theta ",
+    "\R": "\\mathbb{R}",
+    "≤": "\\ensuremath\\leq",
+    "\u2003": "~",
+    "\u202F": "~",
+    "\u2248": "",
+    "\u2212": "-",
+    "\u0308": '\\"',
+    "\u0301": "\\\'",
+    "\u001B": "",
+    "^2": "\\textsuperscript{2}",
+    "^m": "\\textsuperscript{m}",
+    "\percent": "\%", # we replaced % by \percent in html2latex
+    "\&=": "&=" 
+    }
+
+    for key, value in utf8_to_latex.items():
+        instr = instr.replace(key, value)
     return instr
 
 ################################################################################
