@@ -32,15 +32,18 @@ def make_room_plans():
     finally:
         os.chdir(cwd)
 
-def main():
+def parse_arguments():
     parser = argparse.ArgumentParser(description='Generate PDFs for conference materials.')
     parser.add_argument('-b', '--boa', action='store_true', help='Generate book of abstracts')
     parser.add_argument('-d', '-s', '--dsp', action='store_true', help='Generate daily scientific program')
     parser.add_argument('-r', '--rooms', action='store_true', help='Generate room plans')
     parser.add_argument('-a', '--all', action='store_true', help='Generate all PDFs. This is equivalent to "no option", i.e. the default behavior.')
     parser.add_argument('-m', '--withMises', action='store_true', help='Generate PDFs including the von Mises Lecturer(s). Needs to be used together with one of the other options for target selection.')
-    args = parser.parse_args()
+    return parser.parse_args()
 
+def main():
+    args = parse_arguments()
+    
     # Fetch data from ConfTool Pro
     subprocess.check_call([sys.executable, "get_conftool_data.py"])
 
