@@ -13,7 +13,7 @@ from html2latex import html2latex
 ################################################################################
 # cleaner routine that handles all characters giving plain pdflatex trouble    #
 ################################################################################
-def janitor(instr):
+def utf8_clean(instr):
     instr = instr.replace(' &', ' \&')
     instr = instr.replace('#', '\\#')
     instr = instr.replace('Γ', '\\ensuremath\\Gamma ')
@@ -201,7 +201,7 @@ def write_PML(df, outdir):
         ostring += f'        {{{PML["room"]}}}%\n'
         ostring += f'        {{{PML["chair"]}}}%\n'
         ostring += f'        {{{PML["abstract"]}}}%\n'
-        ostring = janitor(ostring)
+        ostring = utf8_clean(ostring)
         file.write(ostring)
         file.close()
     return '\\input{PML.tex}\n'
@@ -221,7 +221,7 @@ def write_PL(df, outdir):
         ostring += f'        {{{PL["room"]}}}%\n'
         ostring += f'        {{{PL["chair"]}}}\n'
         ostring += f'        {{{PL["abstract"]}}}%\n'
-        ostring = janitor(ostring)
+        ostring = utf8_clean(ostring)
         file.write(ostring)
         file.close()
         inputs += f'\\input{{{fname}}}\n'
@@ -243,7 +243,7 @@ def write_RvML(df, outdir):
                 ostring += f'       {{{RvML["start"]}}}%\n'
                 ostring += f'       {{{RvML["end"]}}}%\n'
                 ostring += f'       {{{room}}}{{}}%\n'
-        ostring = janitor(ostring)
+        ostring = utf8_clean(ostring)
         file.write(ostring)
         file.close()
     return '\\input{RvML.tex}\n'
@@ -282,7 +282,7 @@ def write_section(org, sec, df, outdir, toc_sessions_silent=False):
             ostring += f'{{{start}}}%\n'
             ostring += f'{{{organizations}}}\n'
             ostring += f'{{{html2latex(C["abstract"])}}}%\n'
-    ostring = janitor(ostring)
+    ostring = utf8_clean(ostring)
     file.write(ostring)
     file.close()
     return fname
@@ -408,7 +408,7 @@ def make_session_table(SAT, start, n, withMises=False):
                 skip = False
         inputs += '\\\\\\hline\n'
     inputs += '\end{longtable}\n'
-    return janitor(inputs)
+    return utf8_clean(inputs)
 
 def make_room_session_table(row, day, withMises=False):
     start = dt.datetime.fromisoformat(row['session_start'])
@@ -442,7 +442,7 @@ def make_room_session_table(row, day, withMises=False):
 
     inputs += '\end{tabularx}\n\end{samepage}\n'
 
-    return janitor(inputs)
+    return utf8_clean(inputs)
 ################################################################################
 # top-level routines for generating the book of abstracts and daily session    #
 # program                                                                      #

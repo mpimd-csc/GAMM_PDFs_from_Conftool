@@ -15,5 +15,5 @@ def html2latex(instr):
     instr = instr.replace('<blockquote>', '\\begin{quote}').replace('</blockquote>', '\\end{quote}')
     instr = instr.replace('<em>', '{\\em ').replace('</em>', '}')
     instr = instr.replace('<strong>', '{\\bfseries ').replace('</strong>', '}')
-    instr = instr.replace('%', '\percent')# note that the janitor function re-replaces this with \%
+    instr = instr.replace('%', '\percent')# note that the utf8_clean function re-replaces this with \%
     return  instr

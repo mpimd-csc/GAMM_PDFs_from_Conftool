@@ -151,7 +151,7 @@ have a recent LaTeX installation (ideally also providing `latexmk`).
   on the `BookOfAbstracts.tex`. This has some probability to fail, as
   ConfTool  allows  full UTF-8 input in the abstract submission and
   not all incompatible letters or hidden whitespace letters may be
-  covered in the `janitor` function translating them to appropriate
+  covered in the `utf8_clean` function translating them to appropriate
   LaTeX transcriptions. Extend the function in the
   `BoA_DSP_generator.py` file as needed and rerun that in the top-level
   directory. Once it succeeds run `makeindex`to generate the
